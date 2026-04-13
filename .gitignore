@@ -29,6 +29,7 @@ AGENTS.md
 codex
 /docs
 /dental-crm-demo
+todo.md 
 
 # debug
 npm-debug.log*

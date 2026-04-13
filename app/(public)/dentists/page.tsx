@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { getPublicDirectoryData } from "@/lib/public/content";
+import { getPublicDirectoryData } from "@/features/public-content/queries";
 
 type DentistsPageProps = {
   searchParams: Promise<{

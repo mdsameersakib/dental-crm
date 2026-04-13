@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { getPublicDirectoryData } from "@/lib/public/content";
+import { getPublicDirectoryData } from "@/features/public-content/queries";
 
 const servicesHeroImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuA2g0CSdop2wiJgwLhZG4QTwf_Y3-ylsDgT8k61yEhzZrzDk1iC3KqOmbT6TpSO1CE4hZE-N6Qmh6l-P__e8VNO3lQsjwgzwP3amh_OMGzYpiT4-Z3XF1QelAC_vlX4L-wHqBiGS9WjEVWW3eZOR2zxaSKrjl-V8veXB8KRyWfBYtaGKYLlXHM5aP_3VS4UVXn-zsKGSUj-0_jdua92DQkrKOrWF5NKlyDLh7kzVGBGsTgxXe6uLxV8LDyipyKKTfl3IBSXndyvGTo";

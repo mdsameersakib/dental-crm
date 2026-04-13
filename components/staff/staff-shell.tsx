@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
+import { staffNavigationSections } from "@/features/staff/navigation";
+
 type StaffShellProps = {
   profile: {
     firstName: string;
@@ -13,22 +15,6 @@ type StaffShellProps = {
   };
   children: React.ReactNode;
 };
-
-const sidebarLinks = [
-  { href: "/staff/dashboard", label: "Dashboard", icon: "dashboard" },
-  { href: "/staff/patients", label: "Patients", icon: "person" },
-  {
-    href: "/staff/appointments",
-    label: "Appointments",
-    icon: "calendar_today",
-  },
-  { href: "/staff/services", label: "Services", icon: "medical_services" },
-  { href: "/staff/documents", label: "Documents", icon: "description" },
-  { href: "/staff/dentists", label: "Dentists", icon: "medical_information" },
-  { href: "/staff/treatments", label: "Treatments", icon: "dentistry" },
-  { href: "/staff/waitlist", label: "Waitlist", icon: "hourglass_top" },
-  { href: "/staff/settings", label: "Settings", icon: "settings" },
-];
 
 function StaffSidebarContent({
   pathname,
@@ -60,43 +46,50 @@ function StaffSidebarContent({
         </div>
       </div>
 
-      <nav className="flex-1 px-3 py-6">
-        {sidebarLinks.map((link) => {
-          const isActive =
-            pathname === link.href ||
-            (link.href !== "/staff/dashboard" &&
-              pathname.startsWith(`${link.href}/`));
+      <nav className="flex-1 space-y-6 px-3 py-6">
+        {staffNavigationSections.map((section) => (
+          <div key={section.title}>
+            <p className="px-4 pb-2 text-[11px] font-bold uppercase tracking-[0.18em] text-[var(--color-on-surface-variant)]">
+              {section.title}
+            </p>
+            {section.links.map((link) => {
+              const isActive =
+                pathname === link.href ||
+                (link.href !== "/staff/dashboard" &&
+                  pathname.startsWith(`${link.href}/`));
 
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={onNavigate}
-              className={
-                isActive
-                  ? "mb-1 flex items-center gap-3 rounded-2xl bg-[linear-gradient(135deg,rgba(147,242,242,0.42)_0%,rgba(212,227,255,0.28)_100%)] px-4 py-3.5 text-[var(--color-foreground)] shadow-[0_10px_24px_rgba(15,35,35,0.08)] transition-[background-color,color,box-shadow] duration-200 ease-out"
-                  : "mb-1 flex items-center gap-3 rounded-2xl bg-transparent px-4 py-3.5 text-[var(--color-on-surface-variant)] transition-[background-color,color,box-shadow] duration-200 ease-out hover:bg-white/90 hover:text-[var(--color-foreground)] hover:shadow-[0_8px_18px_rgba(15,35,35,0.05)]"
-              }
-            >
-              <span
-                className={`material-symbols-outlined text-[20px] ${
-                  isActive
-                    ? "text-[var(--color-primary)]"
-                    : "text-[var(--color-on-surface-variant)]"
-                }`}
-              >
-                {link.icon}
-              </span>
-              <span
-                className={`text-sm ${
-                  isActive ? "font-semibold tracking-[0.01em]" : "font-medium"
-                }`}
-              >
-                {link.label}
-              </span>
-            </Link>
-          );
-        })}
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={onNavigate}
+                  className={
+                    isActive
+                      ? "mb-1 flex items-center gap-3 rounded-2xl bg-[linear-gradient(135deg,rgba(147,242,242,0.42)_0%,rgba(212,227,255,0.28)_100%)] px-4 py-3.5 text-[var(--color-foreground)] shadow-[0_10px_24px_rgba(15,35,35,0.08)] transition-[background-color,color,box-shadow] duration-200 ease-out"
+                      : "mb-1 flex items-center gap-3 rounded-2xl bg-transparent px-4 py-3.5 text-[var(--color-on-surface-variant)] transition-[background-color,color,box-shadow] duration-200 ease-out hover:bg-white/90 hover:text-[var(--color-foreground)] hover:shadow-[0_8px_18px_rgba(15,35,35,0.05)]"
+                  }
+                >
+                  <span
+                    className={`material-symbols-outlined text-[20px] ${
+                      isActive
+                        ? "text-[var(--color-primary)]"
+                        : "text-[var(--color-on-surface-variant)]"
+                    }`}
+                  >
+                    {link.icon}
+                  </span>
+                  <span
+                    className={`text-sm ${
+                      isActive ? "font-semibold tracking-[0.01em]" : "font-medium"
+                    }`}
+                  >
+                    {link.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
     </>
   );
@@ -117,97 +110,14 @@ function getRoleLabel(role: StaffShellProps["profile"]["role"]) {
   }
 }
 
-function NotificationPopover({
-  isOpen,
-  onToggle,
-  onClose,
-}: {
-  isOpen: boolean;
-  onToggle: () => void;
-  onClose: () => void;
-}) {
-  const popoverRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    const handlePointerDown = (event: PointerEvent) => {
-      if (!popoverRef.current?.contains(event.target as Node)) {
-        onClose();
-      }
-    };
-
-    window.addEventListener("pointerdown", handlePointerDown);
-    return () => window.removeEventListener("pointerdown", handlePointerDown);
-  }, [isOpen, onClose]);
-
-  return (
-    <div ref={popoverRef} className="relative">
-      <button
-        type="button"
-        aria-expanded={isOpen}
-        aria-haspopup="dialog"
-        aria-label="Open notifications"
-        className="relative rounded-full p-2 text-slate-500 transition-colors hover:bg-teal-50 hover:text-teal-700"
-        onClick={onToggle}
-      >
-        <span className="material-symbols-outlined">notifications</span>
-      </button>
-
-      <div
-        aria-hidden={!isOpen}
-        className={`absolute right-0 top-[calc(100%+0.75rem)] z-50 w-[min(24rem,calc(100vw-2rem))] origin-top-right rounded-3xl border border-slate-200 bg-white p-3 shadow-[0_24px_60px_rgba(15,23,42,0.16)] transition-all duration-200 ${
-          isOpen
-            ? "pointer-events-auto translate-y-0 opacity-100"
-            : "pointer-events-none -translate-y-2 opacity-0"
-        }`}
-      >
-        <div className="flex items-start justify-between gap-3 px-2 pb-3 pt-1">
-          <div>
-            <p className="text-sm font-semibold text-slate-900">
-              Notifications
-            </p>
-            <p className="text-xs text-slate-500">
-              Recent clinic and staff updates
-            </p>
-          </div>
-          <Link
-            href="/staff/notifications"
-            className="rounded-full px-3 py-1 text-xs font-semibold text-teal-700 transition-colors hover:bg-teal-50"
-            onClick={onClose}
-          >
-            View all
-          </Link>
-        </div>
-
-        <div className="px-1 pb-1">
-          <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-8 text-center">
-            <p className="text-sm font-semibold text-slate-900">
-              No notifications yet
-            </p>
-            <p className="mt-2 text-sm leading-6 text-slate-500">
-              This panel is ready for real clinic alerts once the notification
-              flow is implemented.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export function StaffShell({ profile, children }: StaffShellProps) {
   const pathname = usePathname();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const lastPathnameRef = useRef(pathname);
 
   useEffect(() => {
     if (lastPathnameRef.current !== pathname) {
       setIsMobileNavOpen(false);
-      setIsNotificationsOpen(false);
       lastPathnameRef.current = pathname;
     }
   }, [pathname]);
@@ -226,21 +136,6 @@ export function StaffShell({ profile, children }: StaffShellProps) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isMobileNavOpen]);
-
-  useEffect(() => {
-    if (!isNotificationsOpen) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setIsNotificationsOpen(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isNotificationsOpen]);
 
   return (
     <div className="min-h-screen bg-[var(--color-surface)] text-[var(--color-foreground)]">
@@ -301,7 +196,7 @@ export function StaffShell({ profile, children }: StaffShellProps) {
               search
             </span>
             <input
-              placeholder="Search patients, bookings, or records..."
+              placeholder="Search bookings, appointments, services..."
               className="w-full border-none bg-transparent p-0 text-sm text-slate-700 outline-none placeholder:text-slate-400"
             />
           </div>
@@ -315,11 +210,9 @@ export function StaffShell({ profile, children }: StaffShellProps) {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <NotificationPopover
-            isOpen={isNotificationsOpen}
-            onToggle={() => setIsNotificationsOpen((current) => !current)}
-            onClose={() => setIsNotificationsOpen(false)}
-          />
+          <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-teal-800">
+            MVP Workspace
+          </span>
           <div className="hidden h-8 w-px bg-slate-200 sm:block" />
           <div className="hidden text-right sm:block">
             <p className="text-sm font-semibold text-slate-900">

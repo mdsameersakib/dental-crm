@@ -6,7 +6,7 @@ export default function StaffServicesPage() {
       area="Staff"
       title="Services"
       path="/staff/services"
-      description="Services route for managing clinic offerings, pricing, and public visibility."
+      description="Services route for managing clinic offerings, pricing, public visibility, and the content shown on the public website."
     />
   );
 }

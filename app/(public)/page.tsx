@@ -2,8 +2,11 @@ import Link from "next/link";
 
 import { HeroTrustCarousel } from "@/components/public/hero-trust-carousel";
 import { LandingInteractive } from "@/components/public/landing-interactive";
-import type { PublicDentist, PublicService } from "@/lib/public/content";
-import { getLandingPageData } from "@/lib/public/content";
+import type {
+  PublicDentist,
+  PublicService,
+} from "@/features/public-content/queries";
+import { getLandingPageData } from "@/features/public-content/queries";
 
 const heroImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuC0ox8WVCeIgSYFcKX1H9Xatki4vdSjR-vl36W6rFvQ2LrILoq3DnF0AtFIoVcxT5G_lj7o85jeiDDQolnxvpF6SU0U5eGg78Mr8HZ4vY4MmXXAhoIytV4uOV6TeO1HI0X5dNSWu6BIHIHUkhyk5fL90x2x-Y_qaUYhQ3F9_cSWcfGnms3IaZwq5s31CybnzJ1APKPftKJrDIveuuwA6sah8DdobO3FPIzdt0WaYlCA5mtrJJzsFARQ4Eenf0h8LbeP-CnVmkhFzBs";

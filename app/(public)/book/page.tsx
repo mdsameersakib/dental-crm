@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import { getBookingPageData } from "@/lib/public/content";
+import { getBookingPageData } from "@/features/public-content/queries";
 
 import { submitBookingRequest } from "./actions";
 

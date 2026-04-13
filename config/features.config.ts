@@ -22,22 +22,16 @@ export const publicExperience = [
 ] as const;
 
 export const patientExperience = [
-  "Dashboard",
   "Appointments",
   "Treatment history",
-  "Aftercare",
-  "Documents",
-  "Profile",
 ] as const;
 
 export const staffExperience = [
   "Dashboard",
-  "Patients",
+  "Booking requests",
   "Appointments",
-  "Treatments",
-  "Documents",
+  "Services",
   "Dentists",
-  "Notifications",
+  "Landing content",
   "Settings",
-  "Waitlist",
 ] as const;

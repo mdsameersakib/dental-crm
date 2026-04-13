@@ -3,9 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { createBookingRequest } from "@/features/bookings/mutations";
+import { validateBookingRequest } from "@/features/bookings/validation";
 
-function redirectWithError(message: string) {
+function redirectWithError(message: string): never {
   const params = new URLSearchParams({
     error: message,
   });
@@ -14,43 +15,13 @@ function redirectWithError(message: string) {
 }
 
 export async function submitBookingRequest(formData: FormData) {
-  const patientName = String(formData.get("patient_name") ?? "").trim();
-  const email = String(formData.get("email") ?? "")
-    .trim()
-    .toLowerCase();
-  const phone = String(formData.get("phone") ?? "").trim();
-  const serviceId = String(formData.get("service_id") ?? "").trim();
-  const preferredDentistId = String(
-    formData.get("preferred_dentist_id") ?? "",
-  ).trim();
-  const preferredDate = String(formData.get("preferred_date") ?? "").trim();
-  const preferredTime = String(formData.get("preferred_time") ?? "").trim();
-  const notes = String(formData.get("notes") ?? "").trim();
+  const validation = validateBookingRequest(formData);
 
-  if (
-    !patientName ||
-    !email ||
-    !phone ||
-    !serviceId ||
-    !preferredDate ||
-    !preferredTime
-  ) {
-    redirectWithError(
-      "Complete the required booking fields before submitting.",
-    );
+  if (!validation.success) {
+    redirectWithError(validation.error);
   }
 
-  const supabase = await createClient();
-  const { error } = await supabase.from("booking_requests").insert({
-    patient_name: patientName,
-    email,
-    phone,
-    service_id: serviceId,
-    preferred_dentist_id: preferredDentistId || null,
-    preferred_date: preferredDate,
-    preferred_time: preferredTime,
-    notes: notes || null,
-  });
+  const { error } = await createBookingRequest(validation.data);
 
   if (error) {
     redirectWithError("We could not submit your request. Please try again.");

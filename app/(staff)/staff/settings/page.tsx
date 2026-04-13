@@ -6,7 +6,7 @@ export default function StaffSettingsPage() {
       area="Staff"
       title="Settings"
       path="/staff/settings"
-      description="Settings route for future clinic preferences, staff access controls, and workspace configuration."
+      description="Settings route for clinic preferences, workspace defaults, and the smaller MVP staff configuration surface."
     />
   );
 }

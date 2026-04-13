@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import {
   getPublicDentistDetail,
   getPublicDirectoryData,
-} from "@/lib/public/content";
+} from "@/features/public-content/queries";
 
 export default async function DentistDetailPage({
   params,
