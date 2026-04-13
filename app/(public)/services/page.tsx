@@ -61,47 +61,58 @@ export default async function ServicesPage() {
                 return (
                   <article
                     key={service.slug}
-                    className="group rounded-xl bg-[var(--color-surface-container-low)] p-8 shadow-sm transition-all duration-500 hover:-translate-y-1 hover:bg-[var(--color-surface-container-lowest)] hover:shadow-2xl"
+                    className="group overflow-hidden rounded-xl bg-[var(--color-surface-container-low)] shadow-sm transition-all duration-500 hover:-translate-y-1 hover:bg-[var(--color-surface-container-lowest)] hover:shadow-2xl"
                   >
-                    <div
-                      className={`mb-6 flex h-14 w-14 items-center justify-center rounded-xl transition-transform group-hover:scale-110 ${
-                        accentClasses[index % accentClasses.length]
-                      }`}
-                    >
-                      <span className="material-symbols-outlined text-3xl">
-                        {service.iconName}
-                      </span>
-                    </div>
-                    <h3 className="mb-3 font-heading text-2xl font-bold text-[var(--color-foreground)]">
-                      {service.name}
-                    </h3>
-                    <p className="mb-6 text-sm leading-relaxed text-[var(--color-on-surface-variant)]">
-                      {service.shortDescription}
-                    </p>
-                    <div className="mb-6 flex items-center justify-between border-t border-[rgba(189,201,200,0.2)] pt-6">
-                      <div className="flex flex-col">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-on-surface-variant)]">
-                          Duration
-                        </span>
-                        <span className="text-sm font-semibold">
-                          {service.durationLabel}
+                    {service.imageUrl ? (
+                      <div className="h-48 overflow-hidden">
+                        <img
+                          alt={service.name}
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          src={service.imageUrl}
+                        />
+                      </div>
+                    ) : null}
+                    <div className="p-8">
+                      <div
+                        className={`mb-6 flex h-14 w-14 items-center justify-center rounded-xl transition-transform group-hover:scale-110 ${
+                          accentClasses[index % accentClasses.length]
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-3xl">
+                          {service.iconName}
                         </span>
                       </div>
-                      <div className="flex flex-col text-right">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-on-surface-variant)]">
-                          Price
-                        </span>
-                        <span className="text-lg font-bold text-[var(--color-primary)]">
-                          {service.priceLabel}
-                        </span>
+                      <h3 className="mb-3 font-heading text-2xl font-bold text-[var(--color-foreground)]">
+                        {service.name}
+                      </h3>
+                      <p className="mb-6 text-sm leading-relaxed text-[var(--color-on-surface-variant)]">
+                        {service.shortDescription}
+                      </p>
+                      <div className="mb-6 flex items-center justify-between border-t border-[rgba(189,201,200,0.2)] pt-6">
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-on-surface-variant)]">
+                            Duration
+                          </span>
+                          <span className="text-sm font-semibold">
+                            {service.durationLabel}
+                          </span>
+                        </div>
+                        <div className="flex flex-col text-right">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-[var(--color-on-surface-variant)]">
+                            Price
+                          </span>
+                          <span className="text-lg font-bold text-[var(--color-primary)]">
+                            {service.priceLabel}
+                          </span>
+                        </div>
                       </div>
+                      <Link
+                        href={`/book?service=${service.slug}`}
+                        className="block w-full rounded-xl bg-[var(--color-primary)] py-4 text-center font-bold !text-white transition-all hover:bg-[var(--color-primary-container)]"
+                      >
+                        Book Treatment
+                      </Link>
                     </div>
-                    <Link
-                      href={`/book?service=${service.slug}`}
-                      className="block w-full rounded-xl bg-[var(--color-primary)] py-4 text-center font-bold !text-white transition-all hover:bg-[var(--color-primary-container)]"
-                    >
-                      Book Treatment
-                    </Link>
                   </article>
                 );
               })}

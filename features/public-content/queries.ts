@@ -7,6 +7,7 @@ export type {
 export {
   getBookingPageData,
   getLandingPageData,
+  getLandingSettingsForStaff,
   getPublicDentistDetail,
   getPublicDirectoryData,
 } from "@/lib/public/content";

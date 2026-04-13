@@ -27,6 +27,7 @@ export type PublicService = {
   shortDescription: string;
   fullDescription: string;
   iconName: string;
+  imageUrl: string | null;
   durationLabel: string;
   priceLabel: string;
 };
@@ -182,7 +183,7 @@ async function readPublishedServices(limit?: number) {
   let query = supabase
     .from("services")
     .select(
-      "id, slug, name, short_description, full_description, icon_name, base_price, duration_min",
+      "id, slug, name, short_description, full_description, icon_name, image_path, base_price, duration_min",
     )
     .eq("is_active", true)
     .eq("is_published", true)
@@ -203,6 +204,7 @@ async function readPublishedServices(limit?: number) {
     | "short_description"
     | "full_description"
     | "icon_name"
+    | "image_path"
     | "base_price"
     | "duration_min"
   >[];
@@ -254,6 +256,7 @@ function mapPublicServices(
     | "short_description"
     | "full_description"
     | "icon_name"
+    | "image_path"
     | "base_price"
     | "duration_min"
   >[],
@@ -269,6 +272,7 @@ function mapPublicServices(
       service.short_description ??
       "Tailored treatment planning and care.",
     iconName: service.icon_name ?? "stethoscope",
+    imageUrl: service.image_path ?? null,
     durationLabel: formatDuration(service.duration_min),
     priceLabel: formatMoney(service.base_price),
   }));
@@ -308,6 +312,19 @@ function buildDefaultAvailability() {
     { day: "sunday", label: "Sun · Closed", isAvailable: false },
   ];
 }
+
+const scheduleDayLabels: Record<
+  Database["public"]["Enums"]["day_of_week"],
+  { key: string; shortLabel: string }
+> = {
+  mon: { key: "monday", shortLabel: "Mon" },
+  tue: { key: "tuesday", shortLabel: "Tue" },
+  wed: { key: "wednesday", shortLabel: "Wed" },
+  thu: { key: "thursday", shortLabel: "Thu" },
+  fri: { key: "friday", shortLabel: "Fri" },
+  sat: { key: "saturday", shortLabel: "Sat" },
+  sun: { key: "sunday", shortLabel: "Sun" },
+};
 
 export async function getLandingPageData() {
   const [settings, services, dentists] = await Promise.all([
@@ -424,29 +441,23 @@ export async function getPublicDentistDetail(dentistId: string) {
     }
   }
 
-  const availability = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-  ].map((day) => {
+  const availability = (
+    ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const
+  ).map((day) => {
     const schedule = availabilityMap.get(day);
-    const dayLabel = `${day.slice(0, 1).toUpperCase()}${day.slice(1, 3)}`;
+    const dayMeta = scheduleDayLabels[day];
 
     if (!schedule || !schedule.is_available) {
       return {
-        day,
-        label: `${dayLabel} · Closed`,
+        day: dayMeta.key,
+        label: `${dayMeta.shortLabel} · Closed`,
         isAvailable: false,
       };
     }
 
     return {
-      day,
-      label: `${dayLabel} · ${formatTime(schedule.start_time)} - ${formatTime(schedule.end_time)}`,
+      day: dayMeta.key,
+      label: `${dayMeta.shortLabel} · ${formatTime(schedule.start_time)} - ${formatTime(schedule.end_time)}`,
       isAvailable: true,
     };
   });
