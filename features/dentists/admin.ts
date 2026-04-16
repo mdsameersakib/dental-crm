@@ -117,3 +117,8 @@ export async function getAvailableDentistStaff() {
 
   return (profiles ?? []).filter((profile) => !usedProfileIds.has(profile.id)) as AvailableDentistStaff[];
 }
+
+export async function getDentistForStaff(dentistId: string) {
+  const dentists = await getDentistsForStaff();
+  return dentists.find((dentist) => dentist.id === dentistId) ?? null;
+}
