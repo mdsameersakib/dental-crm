@@ -12,6 +12,7 @@ type LoginPageProps = {
     error?: string;
     next?: string;
     registered?: string;
+    reset?: string;
     signed_out?: string;
   }>;
 };
@@ -50,6 +51,12 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
       {params.registered ? (
         <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
           Staff account created. You can sign in now.
+        </div>
+      ) : null}
+
+      {params.reset ? (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          Password reset successful. Please sign in with your new password.
         </div>
       ) : null}
 

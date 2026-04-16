@@ -1,6 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
-import type { Database, Json } from "@/types/database";
+import type { Database } from "@/types/database";
 
 type LandingSettingsRow =
   Database["public"]["Tables"]["landing_settings"]["Row"];
@@ -56,71 +56,9 @@ export type PublicDentistDetail = PublicDentist & {
   }[];
 };
 
-export type WhyChooseItem = {
-  title: string;
-  description: string;
-};
-
-const landingPlaceholderContent = {
-  heroTitle: "Modern dental care with clear booking and staff-managed updates.",
-  heroSubtitle:
-    "Browse services, review dentist profiles, and send a booking request from one clinic website.",
-  primaryCtaLabel: "Book Appointment",
-  primaryCtaHref: "/book",
-  secondaryCtaLabel: "Meet Our Dentists",
-  secondaryCtaHref: "/dentists",
-  whyChooseUs: [
-    {
-      title: "Published Services",
-      description: "Review treatments, prices, and visit durations before you book.",
-    },
-    {
-      title: "Dentist Profiles",
-      description: "Browse the dentists, specialties, and schedules managed by staff.",
-    },
-    {
-      title: "Request-Based Booking",
-      description: "Send a booking request first and let the clinic confirm the final appointment.",
-    },
-  ] satisfies WhyChooseItem[],
-  stats: [
-    { label: "Placeholder Metric", value: "TBD" },
-    { label: "Placeholder Metric", value: "TBD" },
-    { label: "Placeholder Metric", value: "TBD" },
-  ],
-};
-
 const DEFAULT_CONTACT_PHONE = "Clinic phone will be added by staff";
 const DEFAULT_CONTACT_EMAIL = "clinic@example.com";
 const DEFAULT_CLINIC_ADDRESS = "Clinic address will be added by staff";
-
-function toWhyChooseItems(value: Json): WhyChooseItem[] {
-  if (!Array.isArray(value)) {
-    return [];
-  }
-
-  return value
-    .map((entry) => {
-      if (!entry || typeof entry !== "object" || Array.isArray(entry)) {
-        return null;
-      }
-
-      const title = typeof entry.title === "string" ? entry.title.trim() : "";
-      const description =
-        typeof entry.description === "string" ? entry.description.trim() : "";
-
-      if (!title || !description) {
-        return null;
-      }
-
-      return { title, description };
-    })
-    .filter((entry): entry is WhyChooseItem => entry !== null);
-}
-
-function fallbackText(value: string | null | undefined, fallback: string) {
-  return value?.trim() ? value : fallback;
-}
 
 function formatMoney(amount: number | null) {
   if (amount === null) {
@@ -333,43 +271,12 @@ export async function getLandingPageData() {
     readPublishedDentists(6),
   ]);
 
-  const whyChooseUs = toWhyChooseItems(settings?.why_choose_us ?? []);
-
   return {
     landing: {
       id: settings?.id ?? null,
-      heroTitle: fallbackText(
-        settings?.hero_title,
-        landingPlaceholderContent.heroTitle,
-      ),
-      heroSubtitle: fallbackText(
-        settings?.hero_subtitle,
-        landingPlaceholderContent.heroSubtitle,
-      ),
-      primaryCtaLabel: fallbackText(
-        settings?.primary_cta_label,
-        landingPlaceholderContent.primaryCtaLabel,
-      ),
-      primaryCtaHref: fallbackText(
-        settings?.primary_cta_href,
-        landingPlaceholderContent.primaryCtaHref,
-      ),
-      secondaryCtaLabel: fallbackText(
-        settings?.secondary_cta_label,
-        landingPlaceholderContent.secondaryCtaLabel,
-      ),
-      secondaryCtaHref: fallbackText(
-        settings?.secondary_cta_href,
-        landingPlaceholderContent.secondaryCtaHref,
-      ),
-      whyChooseUs:
-        whyChooseUs.length > 0
-          ? whyChooseUs
-          : landingPlaceholderContent.whyChooseUs,
       contactPhone: settings?.contact_phone?.trim() || DEFAULT_CONTACT_PHONE,
       contactEmail: settings?.contact_email?.trim() || DEFAULT_CONTACT_EMAIL,
       clinicAddress: settings?.clinic_address?.trim() || DEFAULT_CLINIC_ADDRESS,
-      stats: landingPlaceholderContent.stats,
     },
     services: mapPublicServices(services),
     dentists: mapPublicDentists(dentists),
@@ -505,29 +412,11 @@ export async function getPublicDentistDetail(dentistId: string) {
 
 export async function getLandingSettingsForStaff() {
   const settings = await readLandingSettings();
-  const whyChooseUs = toWhyChooseItems(settings?.why_choose_us ?? []);
 
   return {
     id: settings?.id ?? null,
-    heroTitle: settings?.hero_title ?? landingPlaceholderContent.heroTitle,
-    heroSubtitle:
-      settings?.hero_subtitle ?? landingPlaceholderContent.heroSubtitle,
-    primaryCtaLabel:
-      settings?.primary_cta_label ?? landingPlaceholderContent.primaryCtaLabel,
-    primaryCtaHref:
-      settings?.primary_cta_href ?? landingPlaceholderContent.primaryCtaHref,
-    secondaryCtaLabel:
-      settings?.secondary_cta_label ??
-      landingPlaceholderContent.secondaryCtaLabel,
-    secondaryCtaHref:
-      settings?.secondary_cta_href ??
-      landingPlaceholderContent.secondaryCtaHref,
     contactPhone: settings?.contact_phone ?? "",
     contactEmail: settings?.contact_email ?? "",
     clinicAddress: settings?.clinic_address ?? "",
-    whyChooseUs:
-      whyChooseUs.length > 0
-        ? whyChooseUs
-        : landingPlaceholderContent.whyChooseUs,
   };
 }

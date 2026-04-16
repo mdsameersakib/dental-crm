@@ -2,7 +2,6 @@ export type {
   PublicDentist,
   PublicDentistDetail,
   PublicService,
-  WhyChooseItem,
 } from "@/lib/public/content";
 export {
   getBookingPageData,

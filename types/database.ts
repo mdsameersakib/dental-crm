@@ -368,48 +368,27 @@ export type Database = {
           contact_email: string | null;
           contact_phone: string | null;
           created_at: string;
-          hero_subtitle: string | null;
-          hero_title: string;
           id: string;
-          primary_cta_href: string | null;
-          primary_cta_label: string | null;
-          secondary_cta_href: string | null;
-          secondary_cta_label: string | null;
           updated_at: string;
           updated_by: string | null;
-          why_choose_us: Json;
         };
         Insert: {
           clinic_address?: string | null;
           contact_email?: string | null;
           contact_phone?: string | null;
           created_at?: string;
-          hero_subtitle?: string | null;
-          hero_title: string;
           id?: string;
-          primary_cta_href?: string | null;
-          primary_cta_label?: string | null;
-          secondary_cta_href?: string | null;
-          secondary_cta_label?: string | null;
           updated_at?: string;
           updated_by?: string | null;
-          why_choose_us?: Json;
         };
         Update: {
           clinic_address?: string | null;
           contact_email?: string | null;
           contact_phone?: string | null;
           created_at?: string;
-          hero_subtitle?: string | null;
-          hero_title?: string;
           id?: string;
-          primary_cta_href?: string | null;
-          primary_cta_label?: string | null;
-          secondary_cta_href?: string | null;
-          secondary_cta_label?: string | null;
           updated_at?: string;
           updated_by?: string | null;
-          why_choose_us?: Json;
         };
         Relationships: [
           {

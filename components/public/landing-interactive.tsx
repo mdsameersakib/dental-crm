@@ -12,7 +12,10 @@ export function LandingInteractive() {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
-    <section className="bg-[var(--color-surface-container-low)] py-24" id="faq">
+    <section
+      className="bg-[var(--color-surface-container-low)] pt-8 pb-24 md:pt-10"
+      id="faq"
+    >
       <div className="mx-auto max-w-4xl px-6">
         <div className="mb-14 text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">

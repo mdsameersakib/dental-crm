@@ -1,6 +1,5 @@
 import Link from "next/link";
 
-import { HeroTrustCarousel } from "@/components/public/hero-trust-carousel";
 import { LandingInteractive } from "@/components/public/landing-interactive";
 import { getLandingPageData } from "@/features/public-content/queries";
 
@@ -8,6 +7,28 @@ const heroImage =
   "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=1600&q=80";
 const contactImage =
   "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=1400&q=80";
+const trustHighlights = [
+  {
+    icon: "biotech",
+    title: "Advanced diagnostics",
+    description: "Modern tools and evidence-based planning for clear treatment decisions.",
+  },
+  {
+    icon: "stethoscope",
+    title: "Trusted clinicians",
+    description: "Experienced dental specialists focused on safe and effective care.",
+  },
+  {
+    icon: "dentistry",
+    title: "Comfortable visits",
+    description: "Patient-first appointments designed for confidence and comfort.",
+  },
+  {
+    icon: "fact_check",
+    title: "Clear treatment plans",
+    description: "Step-by-step care plans with transparent next steps and outcomes.",
+  },
+] as const;
 
 function buildMapsHref(address: string) {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
@@ -36,24 +57,24 @@ export default async function PublicLandingPage() {
               Staff-managed dental clinic website
             </p>
             <h1 className="mt-6 max-w-2xl font-heading text-5xl font-extrabold leading-[1.02] tracking-tight text-white md:text-7xl">
-              {landing.heroTitle}
+              Modern dental care with clear booking and staff-managed updates.
             </h1>
             <p className="mt-6 max-w-xl text-base leading-7 text-white/78 md:text-lg">
-              {landing.heroSubtitle}
+              Browse services, review dentist profiles, and send a booking request from one clinic website.
             </p>
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">
               <Link
-                href={landing.primaryCtaHref}
+                href="/book"
                 className="inline-flex items-center justify-center rounded-full bg-white px-7 py-3.5 text-sm font-bold text-slate-900 transition-transform hover:-translate-y-0.5"
               >
-                {landing.primaryCtaLabel}
+                Book Appointment
               </Link>
               <Link
-                href={landing.secondaryCtaHref}
+                href="/dentists"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/55 bg-white/14 px-7 py-3.5 text-sm font-bold !text-white shadow-[0_18px_40px_rgba(10,24,29,0.18)] backdrop-blur-md transition-all hover:-translate-y-0.5 hover:bg-white/22"
               >
-                {landing.secondaryCtaLabel}
+                Meet Our Dentists
                 <span className="material-symbols-outlined text-base">
                   arrow_forward
                 </span>
@@ -84,7 +105,28 @@ export default async function PublicLandingPage() {
         </div>
       </section>
 
-      <HeroTrustCarousel items={landing.whyChooseUs} />
+      <section className="bg-[var(--color-surface-container-low)] py-12">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
+            {trustHighlights.map((item) => (
+              <article
+                key={item.title}
+                className="rounded-2xl bg-[var(--color-surface-container-lowest)] p-5 text-center shadow-sm ring-1 ring-[rgba(189,201,200,0.2)]"
+              >
+                <span className="material-symbols-outlined mb-3 text-3xl text-[var(--color-primary)]">
+                  {item.icon}
+                </span>
+                <h3 className="font-heading text-sm font-bold text-[var(--color-foreground)] md:text-base">
+                  {item.title}
+                </h3>
+                <p className="mt-1 text-xs leading-5 text-[var(--color-on-surface-variant)]">
+                  {item.description}
+                </p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section className="bg-[var(--color-surface)] py-24" id="services">
         <div className="mx-auto max-w-7xl px-6">
@@ -99,7 +141,7 @@ export default async function PublicLandingPage() {
             </div>
             <Link
               href="/services"
-              className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-primary)]"
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/25 bg-white px-5 py-2.5 text-base font-bold text-[var(--color-primary)] shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:!text-white"
             >
               View all services
               <span className="material-symbols-outlined text-base">
@@ -161,7 +203,10 @@ export default async function PublicLandingPage() {
         </div>
       </section>
 
-      <section className="bg-[var(--color-surface-container-low)] py-24" id="dentists">
+      <section
+        className="bg-[var(--color-surface-container-low)] pt-24 pb-8 md:pb-10"
+        id="dentists"
+      >
         <div className="mx-auto max-w-7xl px-6">
           <div className="mb-14 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div className="max-w-2xl">
@@ -174,7 +219,7 @@ export default async function PublicLandingPage() {
             </div>
             <Link
               href="/dentists"
-              className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-primary)]"
+              className="inline-flex items-center gap-2 rounded-full border border-[var(--color-primary)]/25 bg-white px-5 py-2.5 text-base font-bold text-[var(--color-primary)] shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--color-primary)] hover:bg-[var(--color-primary)] hover:!text-white"
             >
               Browse all dentists
               <span className="material-symbols-outlined text-base">
@@ -188,7 +233,7 @@ export default async function PublicLandingPage() {
               {featuredDentists.map((dentist) => (
                 <article
                   key={dentist.id}
-                  className="overflow-hidden rounded-[2rem] bg-white shadow-sm"
+                  className="flex h-full flex-col overflow-hidden rounded-[2rem] bg-white shadow-sm"
                 >
                   <Link href={`/dentists/${dentist.slug}`} className="block">
                     <div className="aspect-[4/5] overflow-hidden">
@@ -199,7 +244,7 @@ export default async function PublicLandingPage() {
                       />
                     </div>
                   </Link>
-                  <div className="space-y-4 p-7">
+                  <div className="flex flex-1 flex-col gap-4 p-7">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--color-primary)]">
                         {dentist.specialty}
@@ -211,7 +256,7 @@ export default async function PublicLandingPage() {
                     <p className="line-clamp-3 text-sm leading-7 text-[var(--color-on-surface-variant)]">
                       {dentist.shortBio}
                     </p>
-                    <div className="flex items-center justify-between border-t border-[var(--color-outline-variant)]/20 pt-4">
+                    <div className="mt-auto flex items-center justify-between border-t border-[var(--color-outline-variant)]/20 pt-4">
                       <Link
                         href={`/dentists/${dentist.slug}`}
                         className="text-sm font-bold text-[var(--color-primary)]"

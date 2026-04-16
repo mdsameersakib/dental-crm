@@ -65,7 +65,7 @@ function StaffSidebarContent({
                   onClick={onNavigate}
                   className={
                     isActive
-                      ? "mb-1 flex items-center gap-3 rounded-2xl bg-[linear-gradient(135deg,rgba(147,242,242,0.42)_0%,rgba(212,227,255,0.28)_100%)] px-4 py-3.5 text-[var(--color-foreground)] shadow-[0_10px_24px_rgba(15,35,35,0.08)] transition-[background-color,color,box-shadow] duration-200 ease-out"
+                      ? "mb-1 flex items-center gap-3 rounded-2xl bg-[#cdeeee] px-4 py-3.5 text-[var(--color-foreground)] shadow-[0_10px_24px_rgba(15,35,35,0.08)] transition-[background-color,color,box-shadow] duration-200 ease-out"
                       : "mb-1 flex items-center gap-3 rounded-2xl bg-transparent px-4 py-3.5 text-[var(--color-on-surface-variant)] transition-[background-color,color,box-shadow] duration-200 ease-out hover:bg-white/90 hover:text-[var(--color-foreground)] hover:shadow-[0_8px_18px_rgba(15,35,35,0.05)]"
                   }
                 >

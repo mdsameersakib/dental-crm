@@ -93,7 +93,7 @@ export default async function DentistsPage({
           {filteredDentists.map((dentist) => (
             <article
               key={dentist.id}
-              className="group relative overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-[rgba(189,201,200,0.25)] transition-transform hover:-translate-y-0.5"
+              className="group relative flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-[rgba(189,201,200,0.25)] transition-transform hover:-translate-y-0.5"
             >
               <Link
                 href={`/dentists/${dentist.slug}`}
@@ -116,7 +116,7 @@ export default async function DentistsPage({
                 </div>
               </div>
 
-              <div className="space-y-4 p-6">
+              <div className="flex flex-1 flex-col gap-4 p-6">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-on-surface-variant)]">
                     Education
@@ -135,7 +135,7 @@ export default async function DentistsPage({
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between border-t border-[var(--color-outline-variant)]/20 pt-4">
+                <div className="mt-auto flex items-center justify-between border-t border-[var(--color-outline-variant)]/20 pt-4">
                   <span className="text-sm font-semibold text-[var(--color-on-surface-variant)]">
                     {dentist.specialty}
                   </span>

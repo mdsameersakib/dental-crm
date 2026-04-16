@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
@@ -73,4 +74,55 @@ export async function signOutStaff() {
 
   revalidatePath("/", "layout");
   redirect("/auth/login?signed_out=1");
+}
+
+async function buildBaseUrlFromHeaders() {
+  const headerStore = await headers();
+  const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host");
+
+  if (!host) {
+    return null;
+  }
+
+  const protocol = headerStore.get("x-forwarded-proto") ?? "https";
+
+  return `${protocol}://${host}`;
+}
+
+function redirectForgotWithStatus(
+  message: string,
+  type: "error" | "success",
+): never {
+  const params = new URLSearchParams({
+    [type]: message,
+  });
+
+  redirect(`/auth/forgot-password?${params.toString()}`);
+}
+
+export async function requestPasswordReset(formData: FormData) {
+  const email = String(formData.get("email") ?? "").trim();
+
+  if (!email) {
+    redirectForgotWithStatus("Email is required.", "error");
+  }
+
+  const supabase = await createClient();
+  const baseUrl = await buildBaseUrlFromHeaders();
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${baseUrl ?? "http://localhost:3000"}/auth/reset-password`,
+  });
+
+  if (error) {
+    redirectForgotWithStatus(
+      "Unable to send a reset email right now. Please try again.",
+      "error",
+    );
+  }
+
+  redirectForgotWithStatus(
+    "If this email is registered, a password reset link has been sent.",
+    "success",
+  );
 }
