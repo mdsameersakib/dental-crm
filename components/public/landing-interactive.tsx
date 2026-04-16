@@ -2,67 +2,63 @@
 
 import { useState } from "react";
 
-type LandingInteractiveProps = {
-  faqs: readonly string[];
-  lang?: "en" | "bn";
-};
+const faqs = [
+  "How does booking work on this site?",
+  "Can I choose a specific dentist?",
+  "When is the appointment confirmed?",
+] as const;
 
-export function LandingInteractive({
-  faqs,
-  lang = "en",
-}: LandingInteractiveProps) {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const copy =
-    lang === "bn"
-      ? {
-          faqHeading: "ক্লিনিক্যাল জিজ্ঞাসা",
-          faqText: "প্রথম ভিজিটের আগে যা জানা দরকার।",
-          faqAnswer:
-            "ভিজিটের সময় আমরা সবকিছু পরিষ্কারভাবে বুঝিয়ে দেব এবং আপনার কেস, স্বাচ্ছন্দ্য ও চিকিৎসার লক্ষ্য অনুযায়ী পরামর্শ দেব।",
-        }
-      : {
-          faqHeading: "Clinical Inquiries",
-          faqText: "Everything you need to know about your first visit.",
-          faqAnswer:
-            "We'll walk you through this clearly during your visit and tailor recommendations to your case, comfort, and treatment goals.",
-        };
+export function LandingInteractive() {
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   return (
     <section className="bg-[var(--color-surface-container-low)] py-24" id="faq">
-      <div className="mx-auto max-w-3xl px-6">
-        <div className="mb-16 text-center">
-          <h2 className="mb-4 font-heading text-4xl font-bold text-[var(--color-foreground)]">
-            {copy.faqHeading}
+      <div className="mx-auto max-w-4xl px-6">
+        <div className="mb-14 text-center">
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">
+            FAQ
+          </p>
+          <h2 className="mt-4 font-heading text-4xl font-bold tracking-tight text-[var(--color-foreground)]">
+            What patients should know before sending a request.
           </h2>
-          <p className="font-light text-[var(--color-on-surface-variant)]">
-            {copy.faqText}
+          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[var(--color-on-surface-variant)]">
+            The public website is intentionally simple: review services, choose a
+            dentist if you want, and send a booking request that staff confirms
+            afterwards.
           </p>
         </div>
-        <div className="space-y-4">
+
+        <div className="grid gap-px overflow-hidden rounded-[2rem] bg-[var(--color-outline-variant)]/20">
           {faqs.map((faq, index) => {
             const isOpen = openFaq === index;
+            const answer =
+              index === 0
+                ? "You select a service, choose a preferred date and time, and submit your details. The request goes to the clinic staff for review."
+                : index === 1
+                  ? "Yes. If a dentist profile is published, patients can select that dentist from the booking page or start from the dentist profile directly."
+                  : "A submitted request is not the final appointment yet. Staff reviews availability and contacts the patient to confirm the final schedule.";
 
             return (
-              <div
-                key={faq}
-                className="rounded-2xl border border-transparent bg-[var(--color-surface-container-lowest)] p-6 shadow-sm transition-all hover:border-[rgba(0,101,101,0.1)]"
-              >
+              <div key={faq} className="bg-white p-6 md:p-7">
                 <button
                   type="button"
                   onClick={() =>
                     setOpenFaq((current) => (current === index ? null : index))
                   }
-                  className="flex w-full items-center justify-between text-left font-heading text-lg font-bold text-[var(--color-foreground)]"
+                  className="flex w-full items-center justify-between gap-6 text-left"
                   aria-expanded={isOpen}
                 >
-                  <span>{faq}</span>
+                  <span className="font-heading text-xl font-bold text-[var(--color-foreground)]">
+                    {faq}
+                  </span>
                   <span className="material-symbols-outlined text-[var(--color-primary)]">
                     {isOpen ? "remove" : "add"}
                   </span>
                 </button>
+
                 {isOpen ? (
-                  <p className="mt-4 pr-10 text-sm leading-7 text-[var(--color-on-surface-variant)]">
-                    {copy.faqAnswer}
+                  <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--color-on-surface-variant)]">
+                    {answer}
                   </p>
                 ) : null}
               </div>

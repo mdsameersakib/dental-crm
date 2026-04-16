@@ -62,25 +62,25 @@ export type WhyChooseItem = {
 };
 
 const landingPlaceholderContent = {
-  heroTitle: "Landing content placeholder",
+  heroTitle: "Modern dental care with clear booking and staff-managed updates.",
   heroSubtitle:
-    "Replace this placeholder copy with the clinic's real landing page story and primary call to action.",
+    "Browse services, review dentist profiles, and send a booking request from one clinic website.",
   primaryCtaLabel: "Book Appointment",
   primaryCtaHref: "/book",
   secondaryCtaLabel: "Meet Our Dentists",
   secondaryCtaHref: "/dentists",
   whyChooseUs: [
     {
-      title: "Why choose us placeholder",
-      description: "Add the first clinic value proposition here.",
+      title: "Published Services",
+      description: "Review treatments, prices, and visit durations before you book.",
     },
     {
-      title: "Care experience placeholder",
-      description: "Add the second landing highlight here.",
+      title: "Dentist Profiles",
+      description: "Browse the dentists, specialties, and schedules managed by staff.",
     },
     {
-      title: "Trust signal placeholder",
-      description: "Add the third proof point here.",
+      title: "Request-Based Booking",
+      description: "Send a booking request first and let the clinic confirm the final appointment.",
     },
   ] satisfies WhyChooseItem[],
   stats: [
@@ -90,9 +90,9 @@ const landingPlaceholderContent = {
   ],
 };
 
-const DEFAULT_CONTACT_PHONE = "Add clinic phone";
-const DEFAULT_CONTACT_EMAIL = "Add clinic email";
-const DEFAULT_CLINIC_ADDRESS = "Add clinic address";
+const DEFAULT_CONTACT_PHONE = "Clinic phone will be added by staff";
+const DEFAULT_CONTACT_EMAIL = "clinic@example.com";
+const DEFAULT_CLINIC_ADDRESS = "Clinic address will be added by staff";
 
 function toWhyChooseItems(value: Json): WhyChooseItem[] {
   if (!Array.isArray(value)) {
