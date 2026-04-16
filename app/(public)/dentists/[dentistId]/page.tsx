@@ -26,10 +26,10 @@ export default async function DentistDetailPage({
     .slice(0, 3);
 
   return (
-    <main className="mx-auto max-w-7xl px-6 pt-28 pb-24">
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-[0.92fr_1.08fr]">
-        <aside className="space-y-7 lg:sticky lg:top-28 lg:self-start">
-          <div className="overflow-hidden rounded-[2.5rem] bg-[var(--color-surface-container-low)]">
+    <main className="mx-auto max-w-7xl px-6 pt-24 pb-20">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+        <aside className="space-y-5 lg:sticky lg:top-24 lg:self-start">
+          <div className="overflow-hidden rounded-[2rem] bg-[var(--color-surface-container-low)]">
             <div className="aspect-[4/5] overflow-hidden">
               <img
                 src={dentist.imageUrl}
@@ -51,16 +51,16 @@ export default async function DentistDetailPage({
             <p className="mt-5 text-xs font-bold uppercase tracking-[0.22em] text-[var(--color-primary)]">
               {dentist.specialty}
             </p>
-            <h1 className="mt-3 font-heading text-4xl font-extrabold tracking-tight text-[var(--color-foreground)]">
+            <h1 className="mt-2 font-heading text-3xl font-extrabold tracking-tight text-[var(--color-foreground)] md:text-4xl">
               {dentist.name}
             </h1>
-            <p className="mt-4 text-base leading-7 text-[var(--color-on-surface-variant)]">
+            <p className="mt-3 text-sm leading-6 text-[var(--color-on-surface-variant)]">
               {dentist.shortBio}
             </p>
           </div>
 
-          <div className="grid gap-px overflow-hidden rounded-[2rem] bg-[var(--color-outline-variant)]/20">
-            <div className="flex items-center justify-between bg-white p-5">
+          <div className="grid gap-px overflow-hidden rounded-[1.5rem] bg-[var(--color-outline-variant)]/20">
+            <div className="flex items-center justify-between bg-white p-4">
               <span className="text-sm text-[var(--color-on-surface-variant)]">
                 Consultation fee
               </span>
@@ -68,7 +68,7 @@ export default async function DentistDetailPage({
                 {dentist.consultationFee}
               </span>
             </div>
-            <div className="flex items-center justify-between bg-white p-5">
+            <div className="flex items-center justify-between bg-white p-4">
               <span className="text-sm text-[var(--color-on-surface-variant)]">
                 Experience
               </span>
@@ -76,7 +76,7 @@ export default async function DentistDetailPage({
                 {dentist.yearsOfExperience}
               </span>
             </div>
-            <div className="flex items-center justify-between bg-white p-5">
+            <div className="flex items-center justify-between bg-white p-4">
               <span className="text-sm text-[var(--color-on-surface-variant)]">
                 Booking status
               </span>
@@ -94,37 +94,37 @@ export default async function DentistDetailPage({
 
           <Link
             href={`/book?dentist=${dentist.slug}`}
-            className="inline-flex w-full items-center justify-center rounded-full bg-[var(--color-primary)] px-6 py-3.5 text-sm font-bold !text-white"
+            className="inline-flex w-full items-center justify-center rounded-full bg-[var(--color-primary)] px-5 py-3 text-sm font-bold !text-white"
           >
             Request Appointment
           </Link>
         </aside>
 
-        <div className="space-y-12">
+        <div className="space-y-8">
           <section>
             <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">
               About
             </p>
-            <h2 className="mt-4 font-heading text-3xl font-bold tracking-tight text-[var(--color-foreground)]">
+            <h2 className="mt-3 font-heading text-2xl font-bold tracking-tight text-[var(--color-foreground)] md:text-3xl">
               Profile overview
             </h2>
-            <p className="mt-5 text-base leading-8 text-[var(--color-on-surface-variant)]">
+            <p className="mt-4 text-sm leading-7 text-[var(--color-on-surface-variant)] md:text-base">
               {dentist.bio}
             </p>
           </section>
 
-          <div className="grid gap-8 md:grid-cols-2">
-            <section className="rounded-[2rem] bg-white p-8 shadow-sm ring-1 ring-[rgba(189,201,200,0.2)]">
-              <h3 className="font-heading text-2xl font-bold text-[var(--color-foreground)]">
+          <div className="grid gap-6 md:grid-cols-2">
+            <section className="rounded-[1.5rem] bg-white p-6 shadow-sm ring-1 ring-[rgba(189,201,200,0.2)]">
+              <h3 className="font-heading text-xl font-bold text-[var(--color-foreground)]">
                 Education
               </h3>
-              <div className="mt-6 space-y-4">
+              <div className="mt-4 space-y-3">
                 {dentist.educationItems.map((item) => (
                   <div
                     key={item}
-                    className="rounded-2xl bg-[var(--color-surface-container-low)] px-5 py-4"
+                    className="rounded-xl bg-[var(--color-surface-container-low)] px-4 py-3"
                   >
-                    <p className="text-sm leading-7 text-[var(--color-foreground)]">
+                    <p className="text-sm leading-6 text-[var(--color-foreground)]">
                       {item}
                     </p>
                   </div>
@@ -132,15 +132,15 @@ export default async function DentistDetailPage({
               </div>
             </section>
 
-            <section className="rounded-[2rem] bg-white p-8 shadow-sm ring-1 ring-[rgba(189,201,200,0.2)]">
-              <h3 className="font-heading text-2xl font-bold text-[var(--color-foreground)]">
+            <section className="rounded-[1.5rem] bg-white p-6 shadow-sm ring-1 ring-[rgba(189,201,200,0.2)]">
+              <h3 className="font-heading text-xl font-bold text-[var(--color-foreground)]">
                 Specialties
               </h3>
-              <div className="mt-6 flex flex-wrap gap-3">
+              <div className="mt-4 flex flex-wrap gap-2">
                 {dentist.specialties.map((specialty) => (
                   <span
                     key={specialty}
-                    className="rounded-full bg-[var(--color-surface-container-low)] px-4 py-2 text-sm font-semibold text-[var(--color-foreground)]"
+                    className="rounded-full bg-[var(--color-surface-container-low)] px-3.5 py-1.5 text-sm font-semibold text-[var(--color-foreground)]"
                   >
                     {specialty}
                   </span>
@@ -155,7 +155,7 @@ export default async function DentistDetailPage({
                 <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">
                   Availability
                 </p>
-                <h3 className="mt-3 font-heading text-3xl font-bold tracking-tight text-[var(--color-foreground)]">
+                <h3 className="mt-2 font-heading text-2xl font-bold tracking-tight text-[var(--color-foreground)] md:text-3xl">
                   Weekly schedule
                 </h3>
               </div>
@@ -167,7 +167,7 @@ export default async function DentistDetailPage({
               </Link>
             </div>
 
-            <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {dentist.availability.map((entry) => (
                 <div
                   key={entry.day}
@@ -180,7 +180,7 @@ export default async function DentistDetailPage({
                   <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--color-on-surface-variant)]">
                     {entry.day}
                   </p>
-                  <p className="mt-3 text-sm font-semibold text-[var(--color-foreground)]">
+                  <p className="mt-2 text-sm font-semibold text-[var(--color-foreground)]">
                     {entry.label}
                   </p>
                 </div>
@@ -191,13 +191,13 @@ export default async function DentistDetailPage({
       </div>
 
       {relatedDentists.length > 0 ? (
-        <section className="mt-24">
+        <section className="mt-16">
           <div className="mb-10 flex items-end justify-between gap-4">
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">
                 More dentists
               </p>
-              <h2 className="mt-3 font-heading text-3xl font-bold tracking-tight text-[var(--color-foreground)]">
+              <h2 className="mt-2 font-heading text-2xl font-bold tracking-tight text-[var(--color-foreground)] md:text-3xl">
                 Continue browsing the clinic team.
               </h2>
             </div>
@@ -209,29 +209,29 @@ export default async function DentistDetailPage({
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
             {relatedDentists.map((entry) => (
               <article
                 key={entry.id}
-                className="overflow-hidden rounded-[2rem] bg-white shadow-sm ring-1 ring-[rgba(189,201,200,0.2)]"
+                className="overflow-hidden rounded-[1.5rem] bg-white shadow-sm ring-1 ring-[rgba(189,201,200,0.2)]"
               >
-                <div className="h-72 overflow-hidden">
+                <div className="h-60 overflow-hidden">
                   <img
                     src={entry.imageUrl}
                     alt={entry.name}
                     className="h-full w-full object-cover"
                   />
                 </div>
-                <div className="space-y-4 p-6">
+                <div className="space-y-3 p-5">
                   <div>
                     <p className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--color-primary)]">
                       {entry.specialty}
                     </p>
-                    <h3 className="mt-2 font-heading text-xl font-bold text-[var(--color-foreground)]">
+                    <h3 className="mt-1.5 font-heading text-lg font-bold text-[var(--color-foreground)]">
                       {entry.name}
                     </h3>
                   </div>
-                  <p className="line-clamp-3 text-sm leading-7 text-[var(--color-on-surface-variant)]">
+                  <p className="line-clamp-3 text-sm leading-6 text-[var(--color-on-surface-variant)]">
                     {entry.shortBio}
                   </p>
                   <Link

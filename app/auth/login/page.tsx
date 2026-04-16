@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 
 import { AuthFragmentBridge } from "@/components/auth/auth-fragment-bridge";
+import { PasswordField } from "@/components/auth/password-field";
 import { getCurrentProfile } from "@/lib/auth/session";
 
 import { signInStaff } from "../actions";
@@ -93,16 +94,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </Link>
           </div>
           <div className="relative">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-[#6e7979]">
-              <span className="material-symbols-outlined text-xl">lock</span>
-            </div>
-            <input
+            <PasswordField
               id="password"
               name="password"
-              type="password"
               required
               placeholder="••••••••"
-              className="block w-full rounded-xl border-0 bg-[var(--color-surface-container-low)] py-3.5 pr-4 pl-11 text-[var(--color-foreground)] outline-none transition-all placeholder:text-[#6e7979] focus:ring-2 focus:ring-[rgba(0,101,101,0.4)]"
             />
           </div>
         </div>
