@@ -34,7 +34,9 @@ export async function GET(request: Request) {
           ["admin", "receptionist", "dentist"].includes(profile.role) &&
           profile.staff_onboarding_completed_at === null
         ) {
-          return NextResponse.redirect(new URL("/auth/staff-onboarding", url.origin));
+          return NextResponse.redirect(
+            new URL("/auth/staff-onboarding", url.origin),
+          );
         }
       }
 

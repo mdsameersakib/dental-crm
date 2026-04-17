@@ -22,7 +22,10 @@ const weekdayOrder = [
 export default async function StaffDentistsPage({
   searchParams,
 }: StaffDentistsPageProps) {
-  const [params, dentists] = await Promise.all([searchParams, getDentistsForStaff()]);
+  const [params, dentists] = await Promise.all([
+    searchParams,
+    getDentistsForStaff(),
+  ]);
 
   return (
     <section className="space-y-8">
@@ -83,7 +86,8 @@ export default async function StaffDentistsPage({
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {dentists.map((dentist) => {
             const displayName =
-              `${dentist.firstName} ${dentist.lastName}`.trim() || dentist.email;
+              `${dentist.firstName} ${dentist.lastName}`.trim() ||
+              dentist.email;
             const availableDaySet = new Set(
               dentist.schedules
                 .filter((entry) => entry.isAvailable)
@@ -112,7 +116,8 @@ export default async function StaffDentistsPage({
                   )}
                   <div className="absolute inset-x-0 bottom-0 bg-[linear-gradient(180deg,rgba(10,24,29,0)_0%,rgba(10,24,29,0.75)_100%)] p-4">
                     <p className="line-clamp-1 text-xs font-bold uppercase tracking-[0.2em] text-white/80">
-                      {dentist.specializations.join(", ") || "Dental Specialist"}
+                      {dentist.specializations.join(", ") ||
+                        "Dental Specialist"}
                     </p>
                   </div>
                 </div>

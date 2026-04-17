@@ -6,7 +6,10 @@ type ConfirmSubmitButtonProps = {
   className?: string;
   confirmMessage: string;
   label: string;
-} & Omit<ButtonHTMLAttributes<HTMLButtonElement>, "type" | "onClick" | "children">;
+} & Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "type" | "onClick" | "children"
+>;
 
 export function ConfirmSubmitButton({
   className,

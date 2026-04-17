@@ -36,9 +36,10 @@ export default async function StaffOnboardingPage({
           Complete your staff profile before entering the CRM.
         </h2>
         <p className="mt-4 text-sm leading-7 text-[var(--color-on-surface-variant)]">
-          This invited account is linked to <span className="font-semibold">{profile.email}</span>.
-          Add the core staff details your clinic needs, then you will be sent into
-          the staff workspace.
+          This invited account is linked to{" "}
+          <span className="font-semibold">{profile.email}</span>. Add the core
+          staff details your clinic needs, then you will be sent into the staff
+          workspace.
         </p>
       </div>
 
@@ -102,7 +103,9 @@ export default async function StaffOnboardingPage({
           className="hero-gradient flex w-full items-center justify-center space-x-2 rounded-xl px-6 py-4 font-bold text-white shadow-lg shadow-[rgba(0,101,101,0.1)] transition-all duration-150 hover:shadow-[rgba(0,101,101,0.2)] active:scale-[0.98]"
         >
           <span className="text-sm tracking-wide">Complete Onboarding</span>
-          <span className="material-symbols-outlined text-lg">arrow_forward</span>
+          <span className="material-symbols-outlined text-lg">
+            arrow_forward
+          </span>
         </button>
       </form>
     </div>

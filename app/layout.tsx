@@ -14,7 +14,8 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: "Dental CRM",
-  description: "Dental CRM for public booking, patient care, and staff operations.",
+  description:
+    "Dental CRM for public booking, patient care, and staff operations.",
 };
 
 export default function RootLayout({

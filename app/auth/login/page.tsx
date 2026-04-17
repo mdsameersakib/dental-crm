@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
 import { AuthFragmentBridge } from "@/components/auth/auth-fragment-bridge";
 import { PasswordField } from "@/components/auth/password-field";
@@ -30,7 +30,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   const params = await searchParams;
   const next =
-    params.next && params.next.startsWith("/staff") ? params.next : "/staff/settings";
+    params.next && params.next.startsWith("/staff")
+      ? params.next
+      : "/staff/settings";
 
   return (
     <div className="space-y-6">
@@ -115,12 +117,15 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
           className="hero-gradient flex w-full items-center justify-center space-x-2 rounded-xl px-6 py-4 font-bold text-white shadow-lg shadow-[rgba(0,101,101,0.1)] transition-all duration-150 hover:shadow-[rgba(0,101,101,0.2)] active:scale-[0.98]"
         >
           <span className="text-sm tracking-wide">Log In</span>
-          <span className="material-symbols-outlined text-lg">arrow_forward</span>
+          <span className="material-symbols-outlined text-lg">
+            arrow_forward
+          </span>
         </button>
       </form>
 
       <p className="text-center text-sm font-medium text-[var(--color-on-surface-variant)]">
-        Need a staff account? Ask your administrator to create it inside the CRM.
+        Need a staff account? Ask your administrator to create it inside the
+        CRM.
       </p>
     </div>
   );

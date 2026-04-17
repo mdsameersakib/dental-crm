@@ -80,7 +80,9 @@ function StaffSidebarContent({
                   </span>
                   <span
                     className={`text-sm ${
-                      isActive ? "font-semibold tracking-[0.01em]" : "font-medium"
+                      isActive
+                        ? "font-semibold tracking-[0.01em]"
+                        : "font-medium"
                     }`}
                   >
                     {link.label}

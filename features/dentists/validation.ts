@@ -39,7 +39,10 @@ function parseOptionalNumber(value: string, label: string) {
 
   const parsed = Number(value);
   if (Number.isNaN(parsed)) {
-    return { success: false as const, error: `${label} must be a valid number.` };
+    return {
+      success: false as const,
+      error: `${label} must be a valid number.`,
+    };
   }
 
   return { success: true as const, value: parsed };
@@ -84,7 +87,10 @@ export function validateDentistProfileForm(formData: FormData) {
 
   const displayOrder = displayOrderRaw ? Number(displayOrderRaw) : 0;
   if (Number.isNaN(displayOrder)) {
-    return { success: false as const, error: "Display order must be a valid number." };
+    return {
+      success: false as const,
+      error: "Display order must be a valid number.",
+    };
   }
 
   return {
@@ -118,14 +124,14 @@ export function validateDentistScheduleForm(formData: FormData) {
     };
   }
 
-  const schedules = (["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const).map(
-    (day) => ({
-      day,
-      startTime: getTrimmedField(formData, `start_time_${day}`),
-      endTime: getTrimmedField(formData, `end_time_${day}`),
-      isAvailable: formData.get(`is_available_${day}`) === "on",
-    }),
-  );
+  const schedules = (
+    ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const
+  ).map((day) => ({
+    day,
+    startTime: getTrimmedField(formData, `start_time_${day}`),
+    endTime: getTrimmedField(formData, `end_time_${day}`),
+    isAvailable: formData.get(`is_available_${day}`) === "on",
+  }));
 
   for (const schedule of schedules) {
     if (schedule.isAvailable && (!schedule.startTime || !schedule.endTime)) {

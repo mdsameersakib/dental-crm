@@ -41,7 +41,9 @@ export default async function DentistDetailPage({
             href="/dentists"
             className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 transition-colors hover:text-white"
           >
-            <span className="material-symbols-outlined text-base">arrow_back</span>
+            <span className="material-symbols-outlined text-base">
+              arrow_back
+            </span>
             Back to dentists
           </Link>
 
@@ -71,7 +73,9 @@ export default async function DentistDetailPage({
                   : "bg-slate-200 text-slate-700"
               }`}
             >
-              {dentist.isAcceptingPatients ? "Accepting Patients" : "Limited Availability"}
+              {dentist.isAcceptingPatients
+                ? "Accepting Patients"
+                : "Limited Availability"}
             </span>
           </div>
         </div>
@@ -86,19 +90,25 @@ export default async function DentistDetailPage({
               </p>
               <dl className="mt-4 space-y-4 text-sm">
                 <div className="flex items-center justify-between gap-3">
-                  <dt className="text-[var(--color-on-surface-variant)]">Consultation fee</dt>
+                  <dt className="text-[var(--color-on-surface-variant)]">
+                    Consultation fee
+                  </dt>
                   <dd className="font-bold text-[var(--color-primary)]">
                     {dentist.consultationFee}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-3">
-                  <dt className="text-[var(--color-on-surface-variant)]">Experience</dt>
+                  <dt className="text-[var(--color-on-surface-variant)]">
+                    Experience
+                  </dt>
                   <dd className="font-bold text-[var(--color-foreground)]">
                     {dentist.yearsOfExperience}
                   </dd>
                 </div>
                 <div className="flex items-center justify-between gap-3">
-                  <dt className="text-[var(--color-on-surface-variant)]">Primary specialty</dt>
+                  <dt className="text-[var(--color-on-surface-variant)]">
+                    Primary specialty
+                  </dt>
                   <dd className="text-right font-bold text-[var(--color-foreground)]">
                     {dentist.specialty}
                   </dd>
@@ -241,7 +251,9 @@ export default async function DentistDetailPage({
                     className="inline-flex items-center gap-2 text-sm font-bold text-[var(--color-primary)]"
                   >
                     View profile
-                    <span className="material-symbols-outlined text-base">arrow_forward</span>
+                    <span className="material-symbols-outlined text-base">
+                      arrow_forward
+                    </span>
                   </Link>
                 </div>
               </article>

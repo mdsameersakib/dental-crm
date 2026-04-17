@@ -11,7 +11,9 @@ export default async function AuthCompletePage({
 }: AuthCompletePageProps) {
   const params = await searchParams;
   const next =
-    params.next && params.next.startsWith("/") ? params.next : "/staff/settings";
+    params.next && params.next.startsWith("/")
+      ? params.next
+      : "/staff/settings";
 
   return (
     <div className="space-y-4">

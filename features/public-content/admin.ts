@@ -1,5 +1,5 @@
-import { createAdminClient } from "@/lib/supabase/admin";
 import { getCurrentProfile } from "@/lib/auth/session";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export type StaffLandingSettings = {
   id: string | null;

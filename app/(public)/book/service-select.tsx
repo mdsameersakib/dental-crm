@@ -15,9 +15,15 @@ type ServiceSelectProps = {
   defaultValue: string;
 };
 
-export function ServiceSelect({ name, options, defaultValue }: ServiceSelectProps) {
+export function ServiceSelect({
+  name,
+  options,
+  defaultValue,
+}: ServiceSelectProps) {
   const initialValue =
-    options.find((option) => option.id === defaultValue)?.id ?? options[0]?.id ?? "";
+    options.find((option) => option.id === defaultValue)?.id ??
+    options[0]?.id ??
+    "";
   const [selectedId, setSelectedId] = useState(initialValue);
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement | null>(null);

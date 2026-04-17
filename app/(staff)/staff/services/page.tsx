@@ -14,7 +14,10 @@ type StaffServicesPageProps = {
 export default async function StaffServicesPage({
   searchParams,
 }: StaffServicesPageProps) {
-  const [params, services] = await Promise.all([searchParams, getServicesForStaff()]);
+  const [params, services] = await Promise.all([
+    searchParams,
+    getServicesForStaff(),
+  ]);
 
   return (
     <section className="space-y-8">
@@ -27,7 +30,8 @@ export default async function StaffServicesPage({
             Services
           </h1>
           <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600">
-            Review the services shown on the public website, then add, edit, publish, or remove them from one place.
+            Review the services shown on the public website, then add, edit,
+            publish, or remove them from one place.
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -61,7 +65,8 @@ export default async function StaffServicesPage({
             No services yet
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-sm leading-7 text-slate-600">
-            Start by creating the clinic services that should appear on the public website and in the booking flow.
+            Start by creating the clinic services that should appear on the
+            public website and in the booking flow.
           </p>
           <Link
             href="/staff/services/new"

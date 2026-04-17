@@ -82,11 +82,15 @@ export default async function BookPage({ searchParams }: BookPageProps) {
         </div>
       ) : null}
 
-      <form action={submitBookingRequest} className="mt-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+      <form
+        action={submitBookingRequest}
+        className="mt-10 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]"
+      >
         <div className="space-y-8 rounded-3xl bg-white p-6 shadow-sm ring-1 ring-[rgba(189,201,200,0.25)] md:p-8">
           <label className="grid gap-2 text-sm">
             <span className="font-semibold text-[var(--color-on-surface-variant)]">
-              1. Choose a service <span className="text-[var(--color-primary)]">*</span>
+              1. Choose a service{" "}
+              <span className="text-[var(--color-primary)]">*</span>
             </span>
             <ServiceSelect
               name="service_id"
@@ -103,7 +107,8 @@ export default async function BookPage({ searchParams }: BookPageProps) {
           <div className="grid gap-6 md:grid-cols-2">
             <label className="grid gap-2 text-sm">
               <span className="font-semibold text-[var(--color-on-surface-variant)]">
-                2. Preferred date <span className="text-[var(--color-primary)]">*</span>
+                2. Preferred date{" "}
+                <span className="text-[var(--color-primary)]">*</span>
               </span>
               <input
                 name="preferred_date"
@@ -116,7 +121,8 @@ export default async function BookPage({ searchParams }: BookPageProps) {
 
             <label className="grid gap-2 text-sm">
               <span className="font-semibold text-[var(--color-on-surface-variant)]">
-                3. Preferred time <span className="text-[var(--color-primary)]">*</span>
+                3. Preferred time{" "}
+                <span className="text-[var(--color-primary)]">*</span>
               </span>
               <SimpleSelect
                 name="preferred_time"
@@ -137,7 +143,8 @@ export default async function BookPage({ searchParams }: BookPageProps) {
           <div className="grid gap-6 md:grid-cols-2">
             <label className="grid gap-2 text-sm">
               <span className="font-semibold text-[var(--color-on-surface-variant)]">
-                4. Full name <span className="text-[var(--color-primary)]">*</span>
+                4. Full name{" "}
+                <span className="text-[var(--color-primary)]">*</span>
               </span>
               <input
                 name="patient_name"
@@ -150,7 +157,8 @@ export default async function BookPage({ searchParams }: BookPageProps) {
 
             <label className="grid gap-2 text-sm">
               <span className="font-semibold text-[var(--color-on-surface-variant)]">
-                5. Phone number <span className="text-[var(--color-primary)]">*</span>
+                5. Phone number{" "}
+                <span className="text-[var(--color-primary)]">*</span>
               </span>
               <input
                 name="phone"
@@ -164,7 +172,8 @@ export default async function BookPage({ searchParams }: BookPageProps) {
 
           <label className="grid gap-2 text-sm">
             <span className="font-semibold text-[var(--color-on-surface-variant)]">
-              6. Email address <span className="text-[var(--color-primary)]">*</span>
+              6. Email address{" "}
+              <span className="text-[var(--color-primary)]">*</span>
             </span>
             <input
               name="email"
@@ -213,7 +222,9 @@ export default async function BookPage({ searchParams }: BookPageProps) {
             className="hero-gradient inline-flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3.5 text-sm font-bold text-white shadow-md transition-transform hover:-translate-y-0.5"
           >
             Submit Booking Request
-            <span className="material-symbols-outlined text-lg">arrow_forward</span>
+            <span className="material-symbols-outlined text-lg">
+              arrow_forward
+            </span>
           </button>
         </div>
 
@@ -234,9 +245,10 @@ export default async function BookPage({ searchParams }: BookPageProps) {
             <p className="mt-2 text-sm font-semibold text-[var(--color-foreground)]">
               {contactPhone}
             </p>
-            <p className="mt-1 text-sm text-[var(--color-foreground)]">{contactEmail}</p>
+            <p className="mt-1 text-sm text-[var(--color-foreground)]">
+              {contactEmail}
+            </p>
           </div>
-
         </aside>
       </form>
     </main>

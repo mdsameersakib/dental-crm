@@ -4,11 +4,7 @@ type AuthLayoutProps = {
   children: React.ReactNode;
 };
 
-export function AuthLayout({
-  title,
-  description,
-  children,
-}: AuthLayoutProps) {
+export function AuthLayout({ title, description, children }: AuthLayoutProps) {
   return (
     <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-[var(--color-surface)] px-6 py-10 selection:bg-[var(--color-primary-fixed)]">
       <div className="absolute top-[-10%] right-[-5%] -z-10 h-[40%] w-[40%] rounded-full bg-[rgba(147,242,242,0.2)] blur-[120px]" />

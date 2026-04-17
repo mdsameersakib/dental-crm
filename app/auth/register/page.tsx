@@ -20,7 +20,8 @@ export default async function RegisterPage() {
         </p>
       </div>
 
-      {profile && ["admin", "receptionist", "dentist"].includes(profile.role) ? (
+      {profile &&
+      ["admin", "receptionist", "dentist"].includes(profile.role) ? (
         <Link
           href="/staff/settings"
           className="hero-gradient flex w-full items-center justify-center rounded-xl px-6 py-4 font-bold text-white"

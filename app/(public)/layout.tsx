@@ -7,5 +7,9 @@ export default function PublicLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <Suspense><PublicSiteShell>{children}</PublicSiteShell></Suspense>;
+  return (
+    <Suspense>
+      <PublicSiteShell>{children}</PublicSiteShell>
+    </Suspense>
+  );
 }

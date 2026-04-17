@@ -11,22 +11,26 @@ const trustHighlights = [
   {
     icon: "biotech",
     title: "Advanced diagnostics",
-    description: "Modern tools and evidence-based planning for clear treatment decisions.",
+    description:
+      "Modern tools and evidence-based planning for clear treatment decisions.",
   },
   {
     icon: "stethoscope",
     title: "Trusted clinicians",
-    description: "Experienced dental specialists focused on safe and effective care.",
+    description:
+      "Experienced dental specialists focused on safe and effective care.",
   },
   {
     icon: "dentistry",
     title: "Comfortable visits",
-    description: "Patient-first appointments designed for confidence and comfort.",
+    description:
+      "Patient-first appointments designed for confidence and comfort.",
   },
   {
     icon: "fact_check",
     title: "Clear treatment plans",
-    description: "Step-by-step care plans with transparent next steps and outcomes.",
+    description:
+      "Step-by-step care plans with transparent next steps and outcomes.",
   },
 ] as const;
 
@@ -60,7 +64,8 @@ export default async function PublicLandingPage() {
               Modern dental care with clear booking and staff-managed updates.
             </h1>
             <p className="mt-6 max-w-xl text-base leading-7 text-white/78 md:text-lg">
-              Browse services, review dentist profiles, and send a booking request from one clinic website.
+              Browse services, review dentist profiles, and send a booking
+              request from one clinic website.
             </p>
 
             <div className="mt-10 flex flex-col gap-4 sm:flex-row">

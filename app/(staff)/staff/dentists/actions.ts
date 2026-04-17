@@ -5,7 +5,10 @@ import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { validateDentistProfileForm, validateDentistScheduleForm } from "@/features/dentists/validation";
+import {
+  validateDentistProfileForm,
+  validateDentistScheduleForm,
+} from "@/features/dentists/validation";
 import { requireStaffProfile } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSupabaseEnv } from "@/lib/supabase/env";
@@ -108,17 +111,30 @@ export async function saveDentistProfile(formData: FormData) {
   }
 
   const existingProfilePhotoPath = validation.data.id
-    ? (
+    ? ((
         await supabase
           .from("dentist_profiles")
           .select("profile_photo_path")
           .eq("id", validation.data.id)
           .maybeSingle()
-      ).data?.profile_photo_path ?? null
+      ).data?.profile_photo_path ?? null)
     : null;
+  const removeProfilePhoto = formData.get("remove_profile_photo") === "on";
   const profilePhotoFile = formData.get("profile_photo");
 
   let profilePhotoPath = existingProfilePhotoPath;
+
+  if (removeProfilePhoto && existingProfilePhotoPath) {
+    const existingBucketPath = extractBucketPathFromPublicUrl(
+      existingProfilePhotoPath,
+    );
+    if (existingBucketPath) {
+      await supabase.storage
+        .from(DENTIST_IMAGE_BUCKET)
+        .remove([existingBucketPath]);
+    }
+    profilePhotoPath = null;
+  }
 
   if (profilePhotoFile instanceof File && profilePhotoFile.size > 0) {
     const fileExtension = fileExtensionFrom(profilePhotoFile);
@@ -137,9 +153,13 @@ export async function saveDentistProfile(formData: FormData) {
     }
 
     if (existingProfilePhotoPath) {
-      const existingBucketPath = extractBucketPathFromPublicUrl(existingProfilePhotoPath);
+      const existingBucketPath = extractBucketPathFromPublicUrl(
+        existingProfilePhotoPath,
+      );
       if (existingBucketPath) {
-        await supabase.storage.from(DENTIST_IMAGE_BUCKET).remove([existingBucketPath]);
+        await supabase.storage
+          .from(DENTIST_IMAGE_BUCKET)
+          .remove([existingBucketPath]);
       }
     }
 
@@ -235,49 +255,4 @@ export async function saveDentistSchedule(formData: FormData) {
 
   revalidatePath("/", "layout");
   redirectWithStatus("Dentist schedule updated.", "success", redirectTo);
-}
-
-export async function removeDentistProfilePhoto(formData: FormData) {
-  await requireStaffProfile();
-  const redirectTo = sanitizeRedirectPath(
-    String(formData.get("redirect_to") ?? "/staff/dentists").trim(),
-  );
-  const dentistId = String(formData.get("dentist_id") ?? "").trim();
-
-  if (!dentistId) {
-    redirectWithStatus("Dentist profile is required.", "error", redirectTo);
-  }
-
-  const supabase = createAdminClient();
-  const { data: dentist, error: readError } = await supabase
-    .from("dentist_profiles")
-    .select("profile_photo_path")
-    .eq("id", dentistId)
-    .maybeSingle();
-
-  if (readError) {
-    redirectWithStatus(readError.message, "error", redirectTo);
-  }
-
-  const photoPath = dentist?.profile_photo_path;
-  if (!photoPath) {
-    redirectWithStatus("No profile image to remove.", "success", redirectTo);
-  }
-
-  const bucketPath = extractBucketPathFromPublicUrl(photoPath);
-  if (bucketPath) {
-    await supabase.storage.from(DENTIST_IMAGE_BUCKET).remove([bucketPath]);
-  }
-
-  const { error: updateError } = await supabase
-    .from("dentist_profiles")
-    .update({ profile_photo_path: null })
-    .eq("id", dentistId);
-
-  if (updateError) {
-    redirectWithStatus(updateError.message, "error", redirectTo);
-  }
-
-  revalidatePath("/", "layout");
-  redirectWithStatus("Profile image removed.", "success", redirectTo);
 }

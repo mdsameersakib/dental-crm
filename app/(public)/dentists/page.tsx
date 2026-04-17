@@ -62,7 +62,9 @@ export default async function DentistsPage({
       <section className="mx-auto max-w-7xl px-6 py-8">
         <div className="rounded-[1.5rem] border border-[var(--color-outline-variant)]/30 bg-white p-4 shadow-sm">
           <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-on-surface-variant)]">
-            <span className="material-symbols-outlined text-base">filter_alt</span>
+            <span className="material-symbols-outlined text-base">
+              filter_alt
+            </span>
             Specialty
           </div>
           <div className="flex flex-wrap items-center gap-2">

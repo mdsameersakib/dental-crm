@@ -1,17 +1,12 @@
 import Link from "next/link";
-
+import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
 import type {
   AvailableDentistStaff,
   StaffDentistProfile,
 } from "@/features/dentists/admin";
 import { dentistScheduleDays } from "@/features/dentists/admin";
-import { ConfirmSubmitButton } from "@/components/ui/confirm-submit-button";
 
-import {
-  removeDentistProfilePhoto,
-  saveDentistProfile,
-  saveDentistSchedule,
-} from "./actions";
+import { saveDentistProfile, saveDentistSchedule } from "./actions";
 
 type DentistFormProps = {
   mode: "create" | "edit";
@@ -122,12 +117,12 @@ export function DentistForm({
               />
               {dentist?.profile_photo_path ? (
                 <div>
-                  <input type="hidden" name="dentist_id" value={dentist.id} />
                   <ConfirmSubmitButton
                     className="inline-flex items-center rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition-colors hover:bg-red-100"
                     confirmMessage="Remove this profile image? This action cannot be undone."
                     label="Remove current image"
-                    formAction={removeDentistProfilePhoto}
+                    name="remove_profile_photo"
+                    value="on"
                   />
                 </div>
               ) : (
@@ -372,7 +367,9 @@ export function DentistForm({
                     <span className="material-symbols-outlined text-[18px] text-[var(--color-primary)]">
                       calendar_month
                     </span>
-                    <p className="text-sm font-semibold text-slate-900">{day.label}</p>
+                    <p className="text-sm font-semibold text-slate-900">
+                      {day.label}
+                    </p>
                   </div>
 
                   <label className="inline-flex w-full items-center justify-end md:justify-end">

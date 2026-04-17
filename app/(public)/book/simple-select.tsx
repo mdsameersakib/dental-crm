@@ -52,7 +52,8 @@ export function SimpleSelect({
   }, []);
 
   const selectedOption = useMemo(
-    () => options.find((option) => option.value === selectedValue) ?? options[0],
+    () =>
+      options.find((option) => option.value === selectedValue) ?? options[0],
     [options, selectedValue],
   );
 

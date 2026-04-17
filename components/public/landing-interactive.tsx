@@ -25,9 +25,9 @@ export function LandingInteractive() {
             What patients should know before sending a request.
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[var(--color-on-surface-variant)]">
-            The public website is intentionally simple: review services, choose a
-            dentist if you want, and send a booking request that staff confirms
-            afterwards.
+            The public website is intentionally simple: review services, choose
+            a dentist if you want, and send a booking request that staff
+            confirms afterwards.
           </p>
         </div>
 

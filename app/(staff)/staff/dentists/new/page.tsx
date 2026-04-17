@@ -9,7 +9,9 @@ type NewDentistPageProps = {
   }>;
 };
 
-export default async function NewDentistPage({ searchParams }: NewDentistPageProps) {
+export default async function NewDentistPage({
+  searchParams,
+}: NewDentistPageProps) {
   const [params, availableDentists] = await Promise.all([
     searchParams,
     getAvailableDentistStaff(),

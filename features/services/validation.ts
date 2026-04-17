@@ -5,7 +5,6 @@ export type ServiceInput = {
   shortDescription: string | null;
   fullDescription: string | null;
   iconName: string | null;
-  imagePath: string | null;
   basePrice: number | null;
   durationMin: number | null;
   displayOrder: number;
@@ -29,7 +28,10 @@ function parseOptionalNumber(value: string, label: string) {
 
   const parsed = Number(value);
   if (Number.isNaN(parsed)) {
-    return { success: false as const, error: `${label} must be a valid number.` };
+    return {
+      success: false as const,
+      error: `${label} must be a valid number.`,
+    };
   }
 
   return { success: true as const, value: parsed };
@@ -45,7 +47,6 @@ export function validateServiceForm(formData: FormData): ValidationResult {
   const shortDescription = getTrimmedField(formData, "short_description");
   const fullDescription = getTrimmedField(formData, "full_description");
   const iconName = getTrimmedField(formData, "icon_name");
-  const imagePath = getTrimmedField(formData, "image_path");
   const basePriceRaw = getTrimmedField(formData, "base_price");
   const durationMinRaw = getTrimmedField(formData, "duration_min");
   const displayOrderRaw = getTrimmedField(formData, "display_order");
@@ -81,7 +82,6 @@ export function validateServiceForm(formData: FormData): ValidationResult {
       shortDescription: shortDescription || null,
       fullDescription: fullDescription || null,
       iconName: iconName || null,
-      imagePath: imagePath || null,
       basePrice: basePrice.value,
       durationMin: durationMin.value,
       displayOrder,

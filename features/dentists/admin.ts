@@ -45,7 +45,10 @@ export type StaffDentistProfile = Pick<
   }>;
 };
 
-export type AvailableDentistStaff = Pick<ProfileRow, "id" | "email" | "first_name" | "last_name">;
+export type AvailableDentistStaff = Pick<
+  ProfileRow,
+  "id" | "email" | "first_name" | "last_name"
+>;
 
 export async function getDentistsForStaff() {
   const supabase = createAdminClient();
@@ -63,7 +66,10 @@ export async function getDentistsForStaff() {
       .order("day_of_week", { ascending: true }),
   ]);
 
-  const schedulesByDentist = new Map<string, StaffDentistProfile["schedules"]>();
+  const schedulesByDentist = new Map<
+    string,
+    StaffDentistProfile["schedules"]
+  >();
   for (const row of schedules ?? []) {
     const current = schedulesByDentist.get(row.dentist_id) ?? [];
     current.push({
@@ -76,7 +82,9 @@ export async function getDentistsForStaff() {
   }
 
   return (profiles ?? []).map((entry) => {
-    const profile = Array.isArray(entry.profiles) ? entry.profiles[0] : entry.profiles;
+    const profile = Array.isArray(entry.profiles)
+      ? entry.profiles[0]
+      : entry.profiles;
     return {
       id: entry.id,
       profile_id: entry.profile_id,
@@ -113,9 +121,13 @@ export async function getAvailableDentistStaff() {
     supabase.from("dentist_profiles").select("profile_id"),
   ]);
 
-  const usedProfileIds = new Set((dentistProfiles ?? []).map((entry) => entry.profile_id));
+  const usedProfileIds = new Set(
+    (dentistProfiles ?? []).map((entry) => entry.profile_id),
+  );
 
-  return (profiles ?? []).filter((profile) => !usedProfileIds.has(profile.id)) as AvailableDentistStaff[];
+  return (profiles ?? []).filter(
+    (profile) => !usedProfileIds.has(profile.id),
+  ) as AvailableDentistStaff[];
 }
 
 export async function getDentistForStaff(dentistId: string) {

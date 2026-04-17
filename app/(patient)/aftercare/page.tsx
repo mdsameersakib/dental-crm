@@ -7,7 +7,9 @@ export default function PatientAftercarePage() {
       title="Aftercare"
       path="/aftercare"
       description="Aftercare route for procedure-specific instructions, medication guidance, and follow-up recommendations."
-      notes={["Designed for post-treatment guidance and AI-assisted summaries later."]}
+      notes={[
+        "Designed for post-treatment guidance and AI-assisted summaries later.",
+      ]}
     />
   );
 }

@@ -27,7 +27,8 @@ export default async function StaffLandingContentPage({
           Landing Content
         </h1>
         <p className="mt-3 max-w-3xl text-sm leading-7 text-slate-600">
-          Update the public contact details shown across the landing and booking pages.
+          Update the public contact details shown across the landing and booking
+          pages.
         </p>
       </div>
 

@@ -60,7 +60,9 @@ export default function ResetPasswordPage() {
       }
 
       if (!session) {
-        setError("Recovery link is invalid or has expired. Please request a new one.");
+        setError(
+          "Recovery link is invalid or has expired. Please request a new one.",
+        );
         setIsPreparing(false);
         return;
       }
@@ -106,7 +108,9 @@ export default function ResetPasswordPage() {
     setIsSubmitting(false);
 
     if (updateError) {
-      setError(updateError.message || "Unable to reset password. Please try again.");
+      setError(
+        updateError.message || "Unable to reset password. Please try again.",
+      );
       return;
     }
 
@@ -175,7 +179,9 @@ export default function ResetPasswordPage() {
             <span className="text-sm tracking-wide">
               {isSubmitting ? "Updating..." : "Set New Password"}
             </span>
-            <span className="material-symbols-outlined text-lg">lock_reset</span>
+            <span className="material-symbols-outlined text-lg">
+              lock_reset
+            </span>
           </button>
         </form>
       ) : null}
