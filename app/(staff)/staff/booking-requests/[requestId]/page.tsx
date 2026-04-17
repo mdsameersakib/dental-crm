@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-
+import { FlashBanner } from "@/components/staff/flash-banner";
 import {
   getActiveAppointmentSlotsForStaff,
   getBookingRequestForStaff,
 } from "@/features/bookings/admin";
+import {
+  buildBookingRequestsHref,
+  buildRequestDetailHref,
+  formatBookingDate,
+} from "@/features/bookings/presentation";
 import { getDentistsForStaff } from "@/features/dentists/admin";
 import { getServicesForStaff } from "@/features/services/admin";
 
@@ -23,32 +28,6 @@ type BookingRequestDetailPageProps = {
     success?: string;
   }>;
 };
-
-function formatDate(date: string | null) {
-  if (!date) {
-    return "Not selected";
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  }).format(new Date(date));
-}
-
-function buildBackHref(query: string, status: string) {
-  const params = new URLSearchParams();
-  if (query) {
-    params.set("q", query);
-  }
-  if (status) {
-    params.set("status", status);
-  }
-  const queryString = params.toString();
-  return queryString
-    ? `/staff/booking-requests?${queryString}`
-    : "/staff/booking-requests";
-}
 
 export default async function BookingRequestDetailPage({
   params,
@@ -71,17 +50,8 @@ export default async function BookingRequestDetailPage({
 
   const query = (queryParams.q ?? "").trim();
   const status = (queryParams.status ?? "").trim();
-  const detailParams = new URLSearchParams();
-  if (query) {
-    detailParams.set("q", query);
-  }
-  if (status) {
-    detailParams.set("status", status);
-  }
-  const detailPath = detailParams.toString()
-    ? `/staff/booking-requests/${request.id}?${detailParams.toString()}`
-    : `/staff/booking-requests/${request.id}`;
-  const backHref = buildBackHref(query, status);
+  const detailPath = buildRequestDetailHref(request.id, query, status);
+  const backHref = buildBookingRequestsHref(query, status);
   const isRequestLocked =
     request.status === "converted" || request.status === "rejected";
   const serviceOptions = services.map((service) => ({
@@ -114,17 +84,7 @@ export default async function BookingRequestDetailPage({
         </Link>
       </div>
 
-      {queryParams.error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {queryParams.error}
-        </div>
-      ) : null}
-
-      {queryParams.success ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          {queryParams.success}
-        </div>
-      ) : null}
+      <FlashBanner error={queryParams.error} success={queryParams.success} />
 
       <div className="grid gap-5 xl:grid-cols-[1.1fr_1fr]">
         <article className="rounded-[1.6rem] border border-slate-200 bg-white p-6 shadow-sm">
@@ -165,7 +125,7 @@ export default async function BookingRequestDetailPage({
                 Preferred Date
               </dt>
               <dd className="mt-1 font-medium text-slate-900">
-                {formatDate(request.preferred_date)}
+                {formatBookingDate(request.preferred_date)}
               </dd>
             </div>
             <div>

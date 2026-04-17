@@ -1,8 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
+import {
+  getDateTimeValue,
+  redirectBookingStaffStatus,
+  sanitizeBookingStaffRedirectPath,
+  toMinutes,
+  weekdayMap,
+} from "@/features/bookings/staff-actions";
 import { requireStaffProfile } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/types/database";
@@ -23,27 +29,6 @@ const allowedAppointmentStatuses: AppointmentStatus[] = [
   "confirmed",
 ];
 
-function sanitizeRedirectPath(path: string) {
-  if (path.startsWith("/staff/booking-requests")) {
-    return path;
-  }
-
-  if (path.startsWith("/staff/appointments")) {
-    return path;
-  }
-
-  return "/staff/booking-requests";
-}
-
-function redirectWithStatus(
-  message: string,
-  type: "error" | "success",
-  path = "/staff/booking-requests",
-): never {
-  const params = new URLSearchParams({ [type]: message });
-  redirect(`${sanitizeRedirectPath(path)}?${params.toString()}`);
-}
-
 async function updateBookingRequestStatus(
   requestId: string,
   status: BookingRequestStatus,
@@ -55,65 +40,62 @@ async function updateBookingRequestStatus(
     .eq("id", requestId);
 }
 
-function getDateTimeValue(date: string, time: string) {
-  const normalizedTime = time.length === 5 ? `${time}:00` : time;
-  return new Date(`${date}T${normalizedTime}`);
-}
-
-const weekdayMap = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
-
-function toMinutes(timeValue: string) {
-  const [hour, minute] = timeValue
-    .slice(0, 5)
-    .split(":")
-    .map((value) => Number.parseInt(value, 10));
-  return hour * 60 + minute;
-}
-
 export async function markBookingRequestAsContacted(formData: FormData) {
   await requireStaffProfile();
   const requestId = String(formData.get("request_id") ?? "").trim();
-  const redirectTo = sanitizeRedirectPath(
+  const redirectTo = sanitizeBookingStaffRedirectPath(
     String(formData.get("redirect_to") ?? "/staff/booking-requests").trim(),
   );
 
   if (!requestId) {
-    redirectWithStatus("Booking request id is required.", "error", redirectTo);
+    redirectBookingStaffStatus(
+      "Booking request id is required.",
+      "error",
+      redirectTo,
+    );
   }
 
   const { error } = await updateBookingRequestStatus(requestId, "contacted");
   if (error) {
-    redirectWithStatus(error.message, "error", redirectTo);
+    redirectBookingStaffStatus(error.message, "error", redirectTo);
   }
 
   revalidatePath("/staff/booking-requests");
-  redirectWithStatus("Request marked as contacted.", "success", redirectTo);
+  redirectBookingStaffStatus(
+    "Request marked as contacted.",
+    "success",
+    redirectTo,
+  );
 }
 
 export async function rejectBookingRequest(formData: FormData) {
   await requireStaffProfile();
   const requestId = String(formData.get("request_id") ?? "").trim();
-  const redirectTo = sanitizeRedirectPath(
+  const redirectTo = sanitizeBookingStaffRedirectPath(
     String(formData.get("redirect_to") ?? "/staff/booking-requests").trim(),
   );
 
   if (!requestId) {
-    redirectWithStatus("Booking request id is required.", "error", redirectTo);
+    redirectBookingStaffStatus(
+      "Booking request id is required.",
+      "error",
+      redirectTo,
+    );
   }
 
   const { error } = await updateBookingRequestStatus(requestId, "rejected");
   if (error) {
-    redirectWithStatus(error.message, "error", redirectTo);
+    redirectBookingStaffStatus(error.message, "error", redirectTo);
   }
 
   revalidatePath("/staff/booking-requests");
-  redirectWithStatus("Request rejected.", "success", redirectTo);
+  redirectBookingStaffStatus("Request rejected.", "success", redirectTo);
 }
 
 export async function convertBookingRequestToAppointment(formData: FormData) {
   const staff = await requireStaffProfile();
   const requestId = String(formData.get("request_id") ?? "").trim();
-  const redirectTo = sanitizeRedirectPath(
+  const redirectTo = sanitizeBookingStaffRedirectPath(
     String(formData.get("redirect_to") ?? "/staff/booking-requests").trim(),
   );
   const dentistId = String(formData.get("dentist_id") ?? "").trim();
@@ -133,7 +115,7 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
     !appointmentDate ||
     !appointmentTime
   ) {
-    redirectWithStatus(
+    redirectBookingStaffStatus(
       "Complete service, dentist, date, and time before converting the request.",
       "error",
       redirectTo,
@@ -142,7 +124,7 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
 
   const durationMin = Number.parseInt(durationMinRaw, 10);
   if (!Number.isFinite(durationMin) || durationMin <= 0) {
-    redirectWithStatus(
+    redirectBookingStaffStatus(
       "Duration must be a positive number.",
       "error",
       redirectTo,
@@ -152,7 +134,7 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
   if (
     !allowedAppointmentStatuses.includes(appointmentStatus as AppointmentStatus)
   ) {
-    redirectWithStatus(
+    redirectBookingStaffStatus(
       "Choose a valid appointment status.",
       "error",
       redirectTo,
@@ -161,7 +143,7 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
 
   const startAt = getDateTimeValue(appointmentDate, appointmentTime);
   if (Number.isNaN(startAt.getTime())) {
-    redirectWithStatus(
+    redirectBookingStaffStatus(
       "Choose a valid appointment date and time.",
       "error",
       redirectTo,
@@ -181,7 +163,7 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
     .eq("day_of_week", weekday);
 
   if (scheduleError) {
-    redirectWithStatus(scheduleError.message, "error", redirectTo);
+    redirectBookingStaffStatus(scheduleError.message, "error", redirectTo);
   }
 
   const isWithinSchedule = (schedules ?? []).some((entry) => {
@@ -194,7 +176,7 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
   });
 
   if (!isWithinSchedule) {
-    redirectWithStatus(
+    redirectBookingStaffStatus(
       "Selected dentist is not available at this date/time.",
       "error",
       redirectTo,
@@ -211,11 +193,11 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
     .limit(1);
 
   if (overlapError) {
-    redirectWithStatus(overlapError.message, "error", redirectTo);
+    redirectBookingStaffStatus(overlapError.message, "error", redirectTo);
   }
 
   if ((overlappingAppointments ?? []).length > 0) {
-    redirectWithStatus(
+    redirectBookingStaffStatus(
       "Selected dentist already has an appointment during this time.",
       "error",
       redirectTo,
@@ -229,15 +211,19 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
     .maybeSingle();
 
   if (requestError) {
-    redirectWithStatus(requestError.message, "error", redirectTo);
+    redirectBookingStaffStatus(requestError.message, "error", redirectTo);
   }
 
   if (!bookingRequest) {
-    redirectWithStatus("Booking request was not found.", "error", redirectTo);
+    redirectBookingStaffStatus(
+      "Booking request was not found.",
+      "error",
+      redirectTo,
+    );
   }
 
   if (!allowedBookingStatuses.includes(bookingRequest.status)) {
-    redirectWithStatus(
+    redirectBookingStaffStatus(
       "Booking request status is invalid.",
       "error",
       redirectTo,
@@ -245,7 +231,7 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
   }
 
   if (bookingRequest.status === "rejected") {
-    redirectWithStatus(
+    redirectBookingStaffStatus(
       "Rejected requests cannot be converted. Move it to contacted first if needed.",
       "error",
       redirectTo,
@@ -253,7 +239,7 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
   }
 
   if (bookingRequest.status === "converted") {
-    redirectWithStatus(
+    redirectBookingStaffStatus(
       "This booking request is already converted to an appointment.",
       "error",
       redirectTo,
@@ -269,7 +255,7 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
     .maybeSingle();
 
   if (patientError) {
-    redirectWithStatus(patientError.message, "error", redirectTo);
+    redirectBookingStaffStatus(patientError.message, "error", redirectTo);
   }
 
   const patientProfiles = patientProfileRef?.patient_profiles;
@@ -300,7 +286,7 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
     .insert(appointmentPayload);
 
   if (appointmentError) {
-    redirectWithStatus(appointmentError.message, "error", redirectTo);
+    redirectBookingStaffStatus(appointmentError.message, "error", redirectTo);
   }
 
   const { error: updateError } = await updateBookingRequestStatus(
@@ -308,12 +294,12 @@ export async function convertBookingRequestToAppointment(formData: FormData) {
     "converted",
   );
   if (updateError) {
-    redirectWithStatus(updateError.message, "error", redirectTo);
+    redirectBookingStaffStatus(updateError.message, "error", redirectTo);
   }
 
   revalidatePath("/staff/booking-requests");
   revalidatePath("/staff/appointments");
-  redirectWithStatus(
+  redirectBookingStaffStatus(
     "Booking request converted to appointment.",
     "success",
     "/staff/appointments",

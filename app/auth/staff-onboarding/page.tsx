@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
+import { AuthStatusBanner } from "@/components/auth/auth-status-banner";
 import { requireStaffProfileForOnboarding } from "@/lib/auth/session";
 
 import { completeStaffOnboarding } from "./actions";
@@ -22,11 +23,7 @@ export default async function StaffOnboardingPage({
 
   return (
     <div className="space-y-6">
-      {params.error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {params.error}
-        </div>
-      ) : null}
+      <AuthStatusBanner error={params.error} />
 
       <div className="rounded-2xl border border-[rgba(189,201,200,0.24)] bg-[var(--color-surface-container-low)] p-6">
         <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[var(--color-primary)]">
@@ -46,10 +43,14 @@ export default async function StaffOnboardingPage({
       <form action={completeStaffOnboarding} className="space-y-6">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-2">
-            <label className="block px-1 text-sm font-semibold text-[var(--color-on-surface-variant)]">
+            <label
+              htmlFor="first_name"
+              className="block px-1 text-sm font-semibold text-[var(--color-on-surface-variant)]"
+            >
               First Name
             </label>
             <input
+              id="first_name"
               name="first_name"
               type="text"
               required
@@ -59,10 +60,14 @@ export default async function StaffOnboardingPage({
           </div>
 
           <div className="space-y-2">
-            <label className="block px-1 text-sm font-semibold text-[var(--color-on-surface-variant)]">
+            <label
+              htmlFor="last_name"
+              className="block px-1 text-sm font-semibold text-[var(--color-on-surface-variant)]"
+            >
               Last Name
             </label>
             <input
+              id="last_name"
               name="last_name"
               type="text"
               required
@@ -73,10 +78,14 @@ export default async function StaffOnboardingPage({
         </div>
 
         <div className="space-y-2">
-          <label className="block px-1 text-sm font-semibold text-[var(--color-on-surface-variant)]">
+          <label
+            htmlFor="phone"
+            className="block px-1 text-sm font-semibold text-[var(--color-on-surface-variant)]"
+          >
             Phone
           </label>
           <input
+            id="phone"
             name="phone"
             type="tel"
             required
@@ -86,10 +95,14 @@ export default async function StaffOnboardingPage({
         </div>
 
         <div className="space-y-2">
-          <label className="block px-1 text-sm font-semibold text-[var(--color-on-surface-variant)]">
+          <label
+            htmlFor="address"
+            className="block px-1 text-sm font-semibold text-[var(--color-on-surface-variant)]"
+          >
             Address
           </label>
           <textarea
+            id="address"
             name="address"
             required
             rows={4}

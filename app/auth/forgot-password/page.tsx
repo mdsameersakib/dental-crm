@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { AuthStatusBanner } from "@/components/auth/auth-status-banner";
+
 import { requestPasswordReset } from "../actions";
 
 type ForgotPasswordPageProps = {
@@ -16,17 +18,7 @@ export default async function ForgotPasswordPage({
 
   return (
     <div className="space-y-6">
-      {params.error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {params.error}
-        </div>
-      ) : null}
-
-      {params.success ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          {params.success}
-        </div>
-      ) : null}
+      <AuthStatusBanner error={params.error} success={params.success} />
 
       <form action={requestPasswordReset} className="space-y-6">
         <div className="space-y-2">

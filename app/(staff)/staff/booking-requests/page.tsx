@@ -1,6 +1,12 @@
 import Link from "next/link";
-
+import { FlashBanner } from "@/components/staff/flash-banner";
 import { getBookingRequestsForStaff } from "@/features/bookings/admin";
+import {
+  bookingRequestStatusColorMap,
+  bookingRequestStatusOptions,
+  buildRequestDetailHref,
+  formatBookingDate,
+} from "@/features/bookings/presentation";
 import type { Database } from "@/types/database";
 
 export const dynamic = "force-dynamic";
@@ -17,61 +23,12 @@ type StaffBookingRequestsPageProps = {
   }>;
 };
 
-const statusOptions: Array<{
-  value: BookingRequestStatus | "all";
-  label: string;
-}> = [
-  { value: "all", label: "All" },
-  { value: "new", label: "New" },
-  { value: "contacted", label: "Contacted" },
-  { value: "converted", label: "Converted" },
-  { value: "rejected", label: "Rejected" },
-];
-
-const statusColorMap: Record<BookingRequestStatus, string> = {
-  new: "bg-cyan-100 text-cyan-700",
-  contacted: "bg-amber-100 text-amber-700",
-  converted: "bg-emerald-100 text-emerald-700",
-  rejected: "bg-rose-100 text-rose-700",
-};
-
-function formatDate(date: string | null) {
-  if (!date) {
-    return "Not selected";
-  }
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  }).format(new Date(date));
-}
-
-function buildRequestDetailHref(
-  requestId: string,
-  query: string,
-  status: string,
-) {
-  const params = new URLSearchParams();
-  if (query) {
-    params.set("q", query);
-  }
-  if (status && status !== "all") {
-    params.set("status", status);
-  }
-
-  const queryString = params.toString();
-  return queryString
-    ? `/staff/booking-requests/${requestId}?${queryString}`
-    : `/staff/booking-requests/${requestId}`;
-}
-
 export default async function StaffBookingRequestsPage({
   searchParams,
 }: StaffBookingRequestsPageProps) {
   const params = await searchParams;
   const query = (params.q ?? "").trim();
-  const selectedStatus = statusOptions.some(
+  const selectedStatus = bookingRequestStatusOptions.some(
     (entry) => entry.value === params.status,
   )
     ? (params.status as BookingRequestStatus | "all")
@@ -101,17 +58,7 @@ export default async function StaffBookingRequestsPage({
         </div>
       </div>
 
-      {params.error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {params.error}
-        </div>
-      ) : null}
-
-      {params.success ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          {params.success}
-        </div>
-      ) : null}
+      <FlashBanner error={params.error} success={params.success} />
 
       <form className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 md:grid-cols-[1fr_220px_auto]">
         <input
@@ -126,7 +73,7 @@ export default async function StaffBookingRequestsPage({
           defaultValue={selectedStatus}
           className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:bg-white focus:outline-none"
         >
-          {statusOptions.map((option) => (
+          {bookingRequestStatusOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
@@ -167,7 +114,7 @@ export default async function StaffBookingRequestsPage({
                   </p>
                 </div>
                 <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${statusColorMap[request.status]}`}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${bookingRequestStatusColorMap[request.status]}`}
                 >
                   {request.status}
                 </span>
@@ -195,7 +142,7 @@ export default async function StaffBookingRequestsPage({
                     Preferred Date
                   </dt>
                   <dd className="mt-1 font-medium text-slate-900">
-                    {formatDate(request.preferred_date)}
+                    {formatBookingDate(request.preferred_date)}
                   </dd>
                 </div>
                 <div>

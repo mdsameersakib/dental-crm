@@ -2,32 +2,23 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
+import {
+  type AppointmentSlot,
+  addDays,
+  buildTimeSlotsAcrossDentists,
+  buildTimeSlotsForDentist,
+  canDentistTakeSlot,
+  type DentistOption,
+  type FlowMode,
+  normalizeTime,
+  type ServiceOption,
+  toDateKey,
+  toMinutes,
+  toTimeLabel,
+} from "@/features/bookings/convert-appointment";
+import { formatCompactDate } from "@/features/bookings/presentation";
+
 import { convertBookingRequestToAppointment } from "../actions";
-
-type DentistSchedule = {
-  day: "mon" | "tue" | "wed" | "thu" | "fri" | "sat" | "sun";
-  startTime: string;
-  endTime: string;
-  isAvailable: boolean;
-};
-
-type DentistOption = {
-  id: string;
-  name: string;
-  email: string;
-  schedules: DentistSchedule[];
-};
-
-type ServiceOption = {
-  id: string;
-  name: string;
-};
-
-type AppointmentSlot = {
-  dentistId: string;
-  startAt: string;
-  endAt: string;
-};
 
 type ConvertAppointmentFormProps = {
   requestId: string;
@@ -41,181 +32,6 @@ type ConvertAppointmentFormProps = {
   defaultTime: string;
   locked: boolean;
 };
-
-type FlowMode = "dentist" | "datetime";
-
-const weekdayMap = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
-
-function toMinutes(timeValue: string) {
-  const [hour, minute] = timeValue
-    .slice(0, 5)
-    .split(":")
-    .map((value) => Number.parseInt(value, 10));
-  return hour * 60 + minute;
-}
-
-function toTimeValue(minutes: number) {
-  const hour = Math.floor(minutes / 60);
-  const minute = minutes % 60;
-  return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
-}
-
-function toTimeLabel(minutes: number) {
-  const hour24 = Math.floor(minutes / 60);
-  const minute = minutes % 60;
-  const period = hour24 >= 12 ? "PM" : "AM";
-  const hour12 = hour24 % 12 === 0 ? 12 : hour24 % 12;
-  return `${hour12}:${String(minute).padStart(2, "0")} ${period}`;
-}
-
-function toDateKey(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function formatDate(date: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    weekday: "short",
-  }).format(new Date(`${date}T00:00:00`));
-}
-
-function addDays(baseDate: Date, days: number) {
-  const cloned = new Date(baseDate);
-  cloned.setDate(cloned.getDate() + days);
-  return cloned;
-}
-
-function normalizeTime(value: string) {
-  const trimmed = value.trim();
-  if (/^\d{2}:\d{2}$/.test(trimmed)) {
-    return trimmed;
-  }
-  if (/^\d{2}:\d{2}:\d{2}$/.test(trimmed)) {
-    return trimmed.slice(0, 5);
-  }
-  return "";
-}
-
-function getWeekday(dateValue: string) {
-  return weekdayMap[new Date(`${dateValue}T00:00:00`).getDay()];
-}
-
-function hasAppointmentConflict(
-  activeAppointments: AppointmentSlot[],
-  dentistId: string,
-  dateValue: string,
-  timeValue: string,
-  durationMin: number,
-) {
-  const selectedStart = new Date(`${dateValue}T${timeValue}:00`);
-  const selectedEnd = new Date(selectedStart.getTime() + durationMin * 60_000);
-
-  return activeAppointments.some((entry) => {
-    if (entry.dentistId !== dentistId) {
-      return false;
-    }
-    const bookedStart = new Date(entry.startAt);
-    const bookedEnd = new Date(entry.endAt);
-    return selectedStart < bookedEnd && selectedEnd > bookedStart;
-  });
-}
-
-function canDentistTakeSlot(
-  dentist: DentistOption,
-  activeAppointments: AppointmentSlot[],
-  dateValue: string,
-  timeValue: string,
-  durationMin: number,
-) {
-  const weekday = getWeekday(dateValue);
-  const startMinute = toMinutes(timeValue);
-  const endMinute = startMinute + durationMin;
-
-  const coveredBySchedule = dentist.schedules.some((entry) => {
-    if (!entry.isAvailable || entry.day !== weekday) {
-      return false;
-    }
-    const scheduleStart = toMinutes(entry.startTime);
-    const scheduleEnd = toMinutes(entry.endTime);
-    return startMinute >= scheduleStart && endMinute <= scheduleEnd;
-  });
-
-  if (!coveredBySchedule) {
-    return false;
-  }
-
-  return !hasAppointmentConflict(
-    activeAppointments,
-    dentist.id,
-    dateValue,
-    timeValue,
-    durationMin,
-  );
-}
-
-function buildTimeSlotsForDentist(
-  dentist: DentistOption,
-  activeAppointments: AppointmentSlot[],
-  dateValue: string,
-  durationMin: number,
-) {
-  const weekday = getWeekday(dateValue);
-  const slotSet = new Set<string>();
-
-  for (const schedule of dentist.schedules) {
-    if (!schedule.isAvailable || schedule.day !== weekday) {
-      continue;
-    }
-
-    const scheduleStart = toMinutes(schedule.startTime);
-    const scheduleEnd = toMinutes(schedule.endTime);
-    for (
-      let cursor = scheduleStart;
-      cursor + durationMin <= scheduleEnd;
-      cursor += 30
-    ) {
-      const slot = toTimeValue(cursor);
-      if (
-        canDentistTakeSlot(
-          dentist,
-          activeAppointments,
-          dateValue,
-          slot,
-          durationMin,
-        )
-      ) {
-        slotSet.add(slot);
-      }
-    }
-  }
-
-  return Array.from(slotSet).sort((a, b) => toMinutes(a) - toMinutes(b));
-}
-
-function buildTimeSlotsAcrossDentists(
-  dentists: DentistOption[],
-  activeAppointments: AppointmentSlot[],
-  dateValue: string,
-  durationMin: number,
-) {
-  const slotSet = new Set<string>();
-  for (const dentist of dentists) {
-    const slots = buildTimeSlotsForDentist(
-      dentist,
-      activeAppointments,
-      dateValue,
-      durationMin,
-    );
-    for (const slot of slots) {
-      slotSet.add(slot);
-    }
-  }
-  return Array.from(slotSet).sort((a, b) => toMinutes(a) - toMinutes(b));
-}
 
 export function ConvertAppointmentForm({
   requestId,
@@ -345,6 +161,9 @@ export function ConvertAppointmentForm({
   useEffect(() => {
     if (!didMountRef.current) {
       didMountRef.current = true;
+      return;
+    }
+    if (!flowMode) {
       return;
     }
     setDentistId("");
@@ -525,7 +344,7 @@ export function ConvertAppointmentForm({
                         : "border border-slate-200 bg-white text-slate-700 hover:border-teal-300 hover:text-teal-700"
                     } disabled:cursor-not-allowed disabled:opacity-50`}
                   >
-                    {formatDate(option)}
+                    {formatCompactDate(option)}
                   </button>
                 );
               })}
@@ -535,37 +354,35 @@ export function ConvertAppointmentForm({
       ) : null}
 
       {flowMode === "datetime" ? (
-        <>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-              Available dates
-            </p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {datetimeFlowDateOptions.map((option) => {
-                const selected = dateValue === option;
-                return (
-                  <button
-                    key={option}
-                    type="button"
-                    onClick={() => {
-                      setDateValue(option);
-                      setTimeValue("");
-                      setDentistId("");
-                    }}
-                    disabled={isFlowPending}
-                    className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-                      selected
-                        ? "bg-[var(--color-primary)] text-white"
-                        : "border border-slate-200 bg-white text-slate-700 hover:border-teal-300 hover:text-teal-700"
-                    } disabled:cursor-not-allowed disabled:opacity-50`}
-                  >
-                    {formatDate(option)}
-                  </button>
-                );
-              })}
-            </div>
+        <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
+            Available dates
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {datetimeFlowDateOptions.map((option) => {
+              const selected = dateValue === option;
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => {
+                    setDateValue(option);
+                    setTimeValue("");
+                    setDentistId("");
+                  }}
+                  disabled={isFlowPending}
+                  className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
+                    selected
+                      ? "bg-[var(--color-primary)] text-white"
+                      : "border border-slate-200 bg-white text-slate-700 hover:border-teal-300 hover:text-teal-700"
+                  } disabled:cursor-not-allowed disabled:opacity-50`}
+                >
+                  {formatCompactDate(option)}
+                </button>
+              );
+            })}
           </div>
-        </>
+        </div>
       ) : null}
 
       <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-3">

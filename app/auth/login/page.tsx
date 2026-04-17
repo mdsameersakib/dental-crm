@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { AuthFragmentBridge } from "@/components/auth/auth-fragment-bridge";
+import { AuthStatusBanner } from "@/components/auth/auth-status-banner";
 import { PasswordField } from "@/components/auth/password-field";
 import { getCurrentProfile } from "@/lib/auth/session";
 
@@ -21,46 +22,33 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   const profile = await getCurrentProfile();
 
   if (
-    profile &&
-    profile.isActive &&
+    profile?.isActive &&
     ["admin", "receptionist", "dentist"].includes(profile.role)
   ) {
     redirect("/staff/settings");
   }
 
   const params = await searchParams;
-  const next =
-    params.next && params.next.startsWith("/staff")
-      ? params.next
-      : "/staff/settings";
+  const next = params.next?.startsWith("/staff")
+    ? params.next
+    : "/staff/settings";
 
   return (
     <div className="space-y-6">
       <AuthFragmentBridge defaultNext="/auth/staff-onboarding" />
 
-      {params.error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {params.error}
-        </div>
-      ) : null}
-
-      {params.signed_out ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          You have been signed out.
-        </div>
-      ) : null}
-
-      {params.registered ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          Staff account created. You can sign in now.
-        </div>
-      ) : null}
-
-      {params.reset ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          Password reset successful. Please sign in with your new password.
-        </div>
-      ) : null}
+      <AuthStatusBanner error={params.error} />
+      <AuthStatusBanner
+        success={
+          params.signed_out
+            ? "You have been signed out."
+            : params.registered
+              ? "Staff account created. You can sign in now."
+              : params.reset
+                ? "Password reset successful. Please sign in with your new password."
+                : null
+        }
+      />
 
       <form action={signInStaff} className="space-y-6">
         <input type="hidden" name="next" value={next} />

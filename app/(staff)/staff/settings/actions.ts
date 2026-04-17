@@ -1,19 +1,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
-import { requireAdminProfile, requireStaffProfile } from "@/lib/auth/session";
-import { createAdminClient } from "@/lib/supabase/admin";
-import { createClient } from "@/lib/supabase/server";
-import type { Database } from "@/types/database";
-
 import {
   saveClinicBookingDefaults,
   saveStaffProfileDetails,
   setStaffActiveStatus,
 } from "@/features/settings/admin";
+import { requireAdminProfile, requireStaffProfile } from "@/lib/auth/session";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
+import { buildBaseUrlFromHeaders } from "@/lib/supabase/url";
+import type { Database } from "@/types/database";
 
 const allowedStaffRoles: Array<Database["public"]["Enums"]["app_role"]> = [
   "admin",
@@ -129,16 +127,6 @@ export async function updateStaffAccountStatus(formData: FormData) {
 
   revalidatePath("/staff/settings");
   redirectWithStatus("Staff account status updated.", "success");
-}
-
-async function buildBaseUrlFromHeaders() {
-  const headerStore = await headers();
-  const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host");
-  if (!host) {
-    return null;
-  }
-  const protocol = headerStore.get("x-forwarded-proto") ?? "https";
-  return `${protocol}://${host}`;
 }
 
 export async function inviteStaffAccount(formData: FormData) {

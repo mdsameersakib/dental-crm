@@ -1,4 +1,11 @@
+import { FlashBanner } from "@/components/staff/flash-banner";
 import { getAppointmentsForStaff } from "@/features/bookings/admin";
+import {
+  appointmentStatusColorMap,
+  appointmentStatusOptions,
+  buildAppointmentsHref,
+  formatAppointmentDateTime,
+} from "@/features/bookings/presentation";
 import type { Database } from "@/types/database";
 
 import { updateAppointmentStatus } from "./actions";
@@ -16,61 +23,17 @@ type StaffAppointmentsPageProps = {
   }>;
 };
 
-const statusOptions: Array<{
-  value: AppointmentStatus | "all";
-  label: string;
-}> = [
-  { value: "all", label: "All" },
-  { value: "scheduled", label: "Scheduled" },
-  { value: "confirmed", label: "Confirmed" },
-  { value: "completed", label: "Completed" },
-  { value: "cancelled", label: "Cancelled" },
-  { value: "no_show", label: "No show" },
-];
-
-const statusColorMap: Record<AppointmentStatus, string> = {
-  scheduled: "bg-cyan-100 text-cyan-700",
-  confirmed: "bg-emerald-100 text-emerald-700",
-  completed: "bg-indigo-100 text-indigo-700",
-  cancelled: "bg-rose-100 text-rose-700",
-  no_show: "bg-amber-100 text-amber-700",
-};
-
-function formatDateTime(dateTime: string) {
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(dateTime));
-}
-
-function getRedirectPath(query: string, status: AppointmentStatus | "all") {
-  const params = new URLSearchParams();
-  if (query) {
-    params.set("q", query);
-  }
-  if (status !== "all") {
-    params.set("status", status);
-  }
-  const queryString = params.toString();
-  return queryString
-    ? `/staff/appointments?${queryString}`
-    : "/staff/appointments";
-}
-
 export default async function StaffAppointmentsPage({
   searchParams,
 }: StaffAppointmentsPageProps) {
   const params = await searchParams;
   const query = (params.q ?? "").trim();
-  const selectedStatus = statusOptions.some(
+  const selectedStatus = appointmentStatusOptions.some(
     (entry) => entry.value === params.status,
   )
     ? (params.status as AppointmentStatus | "all")
     : "all";
-  const redirectPath = getRedirectPath(query, selectedStatus);
+  const redirectPath = buildAppointmentsHref(query, selectedStatus);
   const appointments = await getAppointmentsForStaff({
     query,
     status: selectedStatus,
@@ -97,17 +60,7 @@ export default async function StaffAppointmentsPage({
         </div>
       </div>
 
-      {params.error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {params.error}
-        </div>
-      ) : null}
-
-      {params.success ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          {params.success}
-        </div>
-      ) : null}
+      <FlashBanner error={params.error} success={params.success} />
 
       <form className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 md:grid-cols-[1fr_220px_auto]">
         <input
@@ -122,7 +75,7 @@ export default async function StaffAppointmentsPage({
           defaultValue={selectedStatus}
           className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:bg-white focus:outline-none"
         >
-          {statusOptions.map((option) => (
+          {appointmentStatusOptions.map((option) => (
             <option key={option.value} value={option.value}>
               {option.label}
             </option>
@@ -162,7 +115,7 @@ export default async function StaffAppointmentsPage({
                   </p>
                 </div>
                 <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${statusColorMap[appointment.status]}`}
+                  className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${appointmentStatusColorMap[appointment.status]}`}
                 >
                   {appointment.status}
                 </span>
@@ -190,7 +143,7 @@ export default async function StaffAppointmentsPage({
                     Starts
                   </dt>
                   <dd className="mt-1 font-medium text-slate-900">
-                    {formatDateTime(appointment.start_at)}
+                    {formatAppointmentDateTime(appointment.start_at)}
                   </dd>
                 </div>
                 <div>
@@ -220,7 +173,7 @@ export default async function StaffAppointmentsPage({
                       defaultValue={appointment.status}
                       className="rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 focus:border-teal-500 focus:outline-none"
                     >
-                      {statusOptions
+                      {appointmentStatusOptions
                         .filter((option) => option.value !== "all")
                         .map((option) => (
                           <option key={option.value} value={option.value}>

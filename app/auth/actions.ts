@@ -1,10 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-
 import { createClient } from "@/lib/supabase/server";
+import { buildBaseUrlFromHeaders } from "@/lib/supabase/url";
 
 const staffRoles = new Set(["admin", "receptionist", "dentist"]);
 
@@ -46,12 +45,10 @@ export async function signInStaff(formData: FormData) {
     redirectWithError("Invalid email or password.", next);
   }
 
-  const safeUserId = userId!;
-
   const { data: profile } = await supabase
     .from("profiles")
     .select("role, is_active")
-    .eq("id", safeUserId)
+    .eq("id", userId)
     .maybeSingle();
 
   if (!profile || !staffRoles.has(profile.role)) {
@@ -74,19 +71,6 @@ export async function signOutStaff() {
 
   revalidatePath("/", "layout");
   redirect("/auth/login?signed_out=1");
-}
-
-async function buildBaseUrlFromHeaders() {
-  const headerStore = await headers();
-  const host = headerStore.get("x-forwarded-host") ?? headerStore.get("host");
-
-  if (!host) {
-    return null;
-  }
-
-  const protocol = headerStore.get("x-forwarded-proto") ?? "https";
-
-  return `${protocol}://${host}`;
 }
 
 function redirectForgotWithStatus(

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState } from "react";
 
+import { AuthStatusBanner } from "@/components/auth/auth-status-banner";
 import { PasswordField } from "@/components/auth/password-field";
 import { createClient } from "@/lib/supabase/client";
 
@@ -121,22 +122,9 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="space-y-6">
-      {error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {error}
-        </div>
-      ) : null}
-
-      {message ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          {message}
-        </div>
-      ) : null}
-
+      <AuthStatusBanner error={error} success={message} />
       {isPreparing ? (
-        <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-container-low)] px-4 py-3 text-sm text-[var(--color-on-surface-variant)]">
-          Verifying your recovery link...
-        </div>
+        <AuthStatusBanner info="Verifying your recovery link..." />
       ) : null}
 
       {!isPreparing && !error ? (

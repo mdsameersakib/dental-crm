@@ -1,8 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
+import {
+  redirectAppointmentsStatus,
+  sanitizeAppointmentsRedirectPath,
+} from "@/features/bookings/staff-actions";
 import { requireStaffProfile } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/types/database";
@@ -17,23 +20,6 @@ const allowedStatuses: AppointmentStatus[] = [
   "no_show",
 ];
 
-function sanitizeRedirectPath(path: string) {
-  if (path.startsWith("/staff/appointments")) {
-    return path;
-  }
-
-  return "/staff/appointments";
-}
-
-function redirectWithStatus(
-  message: string,
-  type: "error" | "success",
-  path = "/staff/appointments",
-): never {
-  const params = new URLSearchParams({ [type]: message });
-  redirect(`${sanitizeRedirectPath(path)}?${params.toString()}`);
-}
-
 export async function updateAppointmentStatus(formData: FormData) {
   await requireStaffProfile();
   const appointmentId = String(formData.get("appointment_id") ?? "").trim();
@@ -41,16 +27,20 @@ export async function updateAppointmentStatus(formData: FormData) {
   const cancellationReason = String(
     formData.get("cancellation_reason") ?? "",
   ).trim();
-  const redirectTo = sanitizeRedirectPath(
+  const redirectTo = sanitizeAppointmentsRedirectPath(
     String(formData.get("redirect_to") ?? "/staff/appointments").trim(),
   );
 
   if (!appointmentId) {
-    redirectWithStatus("Appointment id is required.", "error", redirectTo);
+    redirectAppointmentsStatus(
+      "Appointment id is required.",
+      "error",
+      redirectTo,
+    );
   }
 
   if (!allowedStatuses.includes(status as AppointmentStatus)) {
-    redirectWithStatus(
+    redirectAppointmentsStatus(
       "Choose a valid appointment status.",
       "error",
       redirectTo,
@@ -75,9 +65,13 @@ export async function updateAppointmentStatus(formData: FormData) {
     .eq("id", appointmentId);
 
   if (error) {
-    redirectWithStatus(error.message, "error", redirectTo);
+    redirectAppointmentsStatus(error.message, "error", redirectTo);
   }
 
   revalidatePath("/staff/appointments");
-  redirectWithStatus("Appointment status updated.", "success", redirectTo);
+  redirectAppointmentsStatus(
+    "Appointment status updated.",
+    "success",
+    redirectTo,
+  );
 }
