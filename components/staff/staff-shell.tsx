@@ -54,9 +54,7 @@ function StaffSidebarContent({
             </p>
             {section.links.map((link) => {
               const isActive =
-                pathname === link.href ||
-                (link.href !== "/staff/dashboard" &&
-                  pathname.startsWith(`${link.href}/`));
+                pathname === link.href || pathname.startsWith(`${link.href}/`);
 
               return (
                 <Link

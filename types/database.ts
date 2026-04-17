@@ -64,7 +64,9 @@ export type Database = {
           is_recurring: boolean;
           notes: string | null;
           parent_appointment_id: string | null;
-          patient_id: string;
+          patient_email: string | null;
+          patient_id: string | null;
+          patient_name: string | null;
           recurrence_rule: string | null;
           service_id: string | null;
           source: Database["public"]["Enums"]["appointment_source"];
@@ -85,7 +87,9 @@ export type Database = {
           is_recurring?: boolean;
           notes?: string | null;
           parent_appointment_id?: string | null;
-          patient_id: string;
+          patient_email?: string | null;
+          patient_id?: string | null;
+          patient_name?: string | null;
           recurrence_rule?: string | null;
           service_id?: string | null;
           source?: Database["public"]["Enums"]["appointment_source"];
@@ -106,7 +110,9 @@ export type Database = {
           is_recurring?: boolean;
           notes?: string | null;
           parent_appointment_id?: string | null;
-          patient_id?: string;
+          patient_email?: string | null;
+          patient_id?: string | null;
+          patient_name?: string | null;
           recurrence_rule?: string | null;
           service_id?: string | null;
           source?: Database["public"]["Enums"]["appointment_source"];
