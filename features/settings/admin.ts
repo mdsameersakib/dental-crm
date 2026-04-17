@@ -1,13 +1,8 @@
+import { staffRoles } from "@/features/staff/roles";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/types/database";
 
 type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];
-
-const staffRoles: Array<Database["public"]["Enums"]["app_role"]> = [
-  "admin",
-  "receptionist",
-  "dentist",
-];
 
 export type StaffMember = Pick<
   ProfileRow,

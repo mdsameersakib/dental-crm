@@ -36,7 +36,7 @@ This map reflects only the currently implemented surfaces after cleanup.
 ## 2) Where Data Comes From
 
 ### Public read models
-- Main source for public content -> `lib/public/content.ts`
+- Main source for public content -> `features/public-content/queries.ts`
 - Thin re-export layer used by pages -> `features/public-content/queries.ts`
 
 ### Staff CRUD and operations

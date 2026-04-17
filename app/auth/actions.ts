@@ -2,10 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { isStaffRole } from "@/features/staff/roles";
 import { createClient } from "@/lib/supabase/server";
 import { buildBaseUrlFromHeaders } from "@/lib/supabase/url";
-
-const staffRoles = new Set(["admin", "receptionist", "dentist"]);
 
 function redirectWithError(message: string, next = "/staff/settings"): never {
   const params = new URLSearchParams({
@@ -51,7 +50,7 @@ export async function signInStaff(formData: FormData) {
     .eq("id", userId)
     .maybeSingle();
 
-  if (!profile || !staffRoles.has(profile.role)) {
+  if (!profile || !isStaffRole(profile.role)) {
     await supabase.auth.signOut();
     redirectWithError("This login is limited to staff accounts.", next);
   }

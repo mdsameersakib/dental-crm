@@ -1,3 +1,4 @@
+import { FlashBanner } from "@/components/staff/flash-banner";
 import { getLandingSettingsForStaff } from "@/features/public-content/queries";
 
 import { saveLandingContent } from "./actions";
@@ -32,17 +33,7 @@ export default async function StaffLandingContentPage({
         </p>
       </div>
 
-      {params.error ? (
-        <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {params.error}
-        </div>
-      ) : null}
-
-      {params.success ? (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
-          {params.success}
-        </div>
-      ) : null}
+      <FlashBanner error={params.error} success={params.success} />
 
       <form
         action={saveLandingContent}

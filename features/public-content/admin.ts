@@ -1,12 +1,6 @@
 import { getCurrentProfile } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
-
-export type StaffLandingSettings = {
-  id: string | null;
-  contactPhone: string;
-  contactEmail: string;
-  clinicAddress: string;
-};
+import type { StaffLandingSettings } from "./types";
 
 export async function saveLandingSettings(input: StaffLandingSettings) {
   const supabase = createAdminClient();

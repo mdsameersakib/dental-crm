@@ -1,15 +1,11 @@
 import { redirect } from "next/navigation";
 
+import {
+  isAdminRole,
+  isLandingManagerRole,
+  isStaffRole,
+} from "@/features/staff/roles";
 import { createClient } from "@/lib/supabase/server";
-
-type ProfileRole = "patient" | "dentist" | "receptionist" | "admin";
-
-const staffRoles: ProfileRole[] = ["dentist", "receptionist", "admin"];
-const landingManagerRoles: ProfileRole[] = ["receptionist", "admin"];
-
-function isStaffRole(role: ProfileRole) {
-  return staffRoles.includes(role);
-}
 
 export async function getCurrentProfile() {
   const supabase = await createClient();
@@ -73,7 +69,7 @@ export async function requireStaffProfile() {
 export async function requireLandingManagerProfile() {
   const profile = await requireStaffProfile();
 
-  if (!landingManagerRoles.includes(profile.role)) {
+  if (!isLandingManagerRole(profile.role)) {
     redirect("/staff/dashboard?error=landing_access_denied");
   }
 
@@ -83,7 +79,7 @@ export async function requireLandingManagerProfile() {
 export async function requireAdminProfile() {
   const profile = await requireStaffProfile();
 
-  if (profile.role !== "admin") {
+  if (!isAdminRole(profile.role)) {
     redirect("/staff/dashboard?error=admin_access_denied");
   }
 
