@@ -7,12 +7,6 @@ import { useEffect, useRef, useState } from "react";
 import { staffNavigationSections } from "@/features/staff/navigation";
 
 type StaffShellProps = {
-  profile: {
-    firstName: string;
-    lastName: string;
-    role: "admin" | "receptionist" | "dentist" | "patient";
-    email: string;
-  };
   children: React.ReactNode;
 };
 
@@ -95,22 +89,7 @@ function StaffSidebarContent({
   );
 }
 
-function getDisplayName(profile: StaffShellProps["profile"]) {
-  return `${profile.firstName} ${profile.lastName}`.trim() || profile.email;
-}
-
-function getRoleLabel(role: StaffShellProps["profile"]["role"]) {
-  switch (role) {
-    case "admin":
-      return "Administrator";
-    case "dentist":
-      return "Dentist";
-    default:
-      return "Reception";
-  }
-}
-
-export function StaffShell({ profile, children }: StaffShellProps) {
+export function StaffShell({ children }: StaffShellProps) {
   const pathname = usePathname();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const lastPathnameRef = useRef(pathname);
@@ -175,8 +154,8 @@ export function StaffShell({ profile, children }: StaffShellProps) {
         <StaffSidebarContent pathname={pathname} />
       </aside>
 
-      <header className="sticky top-0 z-40 flex h-16 items-center justify-between border-b border-white/60 bg-white/80 px-5 shadow-sm backdrop-blur-md lg:ml-64 lg:px-8">
-        <div className="flex flex-1 items-center gap-4">
+      <main className="px-5 py-8 lg:ml-64 lg:px-8 lg:py-10">
+        <div className="mb-5 lg:hidden">
           <button
             type="button"
             aria-expanded={isMobileNavOpen}
@@ -184,48 +163,17 @@ export function StaffShell({ profile, children }: StaffShellProps) {
             aria-label={
               isMobileNavOpen ? "Close navigation menu" : "Open navigation menu"
             }
-            className="rounded-full p-2 text-slate-500 transition-colors hover:bg-teal-50 hover:text-teal-700 lg:hidden"
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-slate-50"
             onClick={() => setIsMobileNavOpen((current) => !current)}
           >
-            <span className="material-symbols-outlined">
+            <span className="material-symbols-outlined text-[18px]">
               {isMobileNavOpen ? "close" : "menu"}
             </span>
+            Menu
           </button>
-          <div className="hidden max-w-md flex-1 items-center rounded-full border border-slate-200 bg-slate-50 px-4 py-2 md:flex">
-            <span className="material-symbols-outlined mr-2 text-slate-400">
-              search
-            </span>
-            <input
-              placeholder="Search bookings, appointments, services..."
-              className="w-full border-none bg-transparent p-0 text-sm text-slate-700 outline-none placeholder:text-slate-400"
-            />
-          </div>
-          <div className="lg:hidden">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
-              Staff Portal
-            </p>
-            <p className="font-heading text-lg font-bold tracking-tight text-slate-900">
-              Dental CRM
-            </p>
-          </div>
         </div>
-        <div className="flex items-center gap-4">
-          <span className="rounded-full bg-teal-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-teal-800">
-            MVP Workspace
-          </span>
-          <div className="hidden h-8 w-px bg-slate-200 sm:block" />
-          <div className="hidden text-right sm:block">
-            <p className="text-sm font-semibold text-slate-900">
-              {getDisplayName(profile)}
-            </p>
-            <p className="text-xs text-slate-500">
-              {getRoleLabel(profile.role)}
-            </p>
-          </div>
-        </div>
-      </header>
-
-      <main className="px-5 py-8 lg:ml-64 lg:px-8 lg:py-10">{children}</main>
+        {children}
+      </main>
     </div>
   );
 }

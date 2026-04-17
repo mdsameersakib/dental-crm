@@ -14,18 +14,7 @@ async function StaffLayoutInner({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const profile = await requireStaffProfile();
+  await requireStaffProfile();
 
-  return (
-    <StaffShell
-      profile={{
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        role: profile.role,
-        email: profile.email,
-      }}
-    >
-      {children}
-    </StaffShell>
-  );
+  return <StaffShell>{children}</StaffShell>;
 }
