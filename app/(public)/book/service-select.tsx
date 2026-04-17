@@ -10,12 +10,14 @@ type ServiceOption = {
 };
 
 type ServiceSelectProps = {
+  id?: string;
   name: string;
   options: ServiceOption[];
   defaultValue: string;
 };
 
 export function ServiceSelect({
+  id,
   name,
   options,
   defaultValue,
@@ -60,6 +62,7 @@ export function ServiceSelect({
       <input type="hidden" name={name} value={selectedId} required />
 
       <button
+        id={id}
         type="button"
         onClick={() => setIsOpen((current) => !current)}
         className="flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--color-outline-variant)]/30 bg-[var(--color-surface-container-low)] px-4 py-3 text-left shadow-[0_1px_0_rgba(10,24,29,0.04)] transition-colors hover:border-[var(--color-primary)]/45"
@@ -92,7 +95,7 @@ export function ServiceSelect({
 
       {isOpen ? (
         <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-[var(--color-outline-variant)]/30 bg-white shadow-[0_16px_40px_rgba(10,24,29,0.12)]">
-          <ul role="listbox" className="max-h-80 overflow-auto">
+          <ul className="max-h-80 overflow-auto">
             {options.map((option) => {
               const isSelected = option.id === selectedId;
 

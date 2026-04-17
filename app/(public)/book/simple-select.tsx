@@ -9,6 +9,7 @@ type SimpleSelectOption = {
 };
 
 type SimpleSelectProps = {
+  id?: string;
   name: string;
   options: SimpleSelectOption[];
   defaultValue: string;
@@ -16,6 +17,7 @@ type SimpleSelectProps = {
 };
 
 export function SimpleSelect({
+  id,
   name,
   options,
   defaultValue,
@@ -67,6 +69,7 @@ export function SimpleSelect({
       />
 
       <button
+        id={id}
         type="button"
         onClick={() => setIsOpen((current) => !current)}
         className="flex w-full items-center justify-between gap-3 rounded-xl border border-[var(--color-outline-variant)]/30 bg-[var(--color-surface-container-low)] px-4 py-3 text-left shadow-[0_1px_0_rgba(10,24,29,0.04)] transition-colors hover:border-[var(--color-primary)]/45"
@@ -94,7 +97,7 @@ export function SimpleSelect({
 
       {isOpen ? (
         <div className="absolute z-20 mt-2 w-full overflow-hidden rounded-xl border border-[var(--color-outline-variant)]/30 bg-white shadow-[0_16px_40px_rgba(10,24,29,0.12)]">
-          <ul role="listbox" className="max-h-80 overflow-auto">
+          <ul className="max-h-80 overflow-auto">
             {options.map((option) => {
               const isSelected = option.value === selectedValue;
 
