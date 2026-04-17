@@ -218,6 +218,41 @@ export type Database = {
           },
         ];
       };
+      clinic_settings: {
+        Row: {
+          booking_default_duration_min: number;
+          booking_timezone: string;
+          created_at: string;
+          id: string;
+          updated_at: string;
+          updated_by: string | null;
+        };
+        Insert: {
+          booking_default_duration_min?: number;
+          booking_timezone?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Update: {
+          booking_default_duration_min?: number;
+          booking_timezone?: string;
+          created_at?: string;
+          id?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "clinic_settings_updated_by_fkey";
+            columns: ["updated_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       dentist_profiles: {
         Row: {
           bio: string | null;
