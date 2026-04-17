@@ -1,10 +1,11 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
-
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
+import {
+  removeDentistImage,
+  uploadDentistImage,
+} from "@/features/dentists/storage";
 import {
   validateDentistProfileForm,
   validateDentistScheduleForm,
@@ -12,38 +13,6 @@ import {
 import { requireStaffProfile } from "@/lib/auth/session";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getSupabaseEnv } from "@/lib/supabase/env";
-
-const DENTIST_IMAGE_BUCKET = "doctor-images";
-
-function extractBucketPathFromPublicUrl(url: string) {
-  const marker = `/storage/v1/object/public/${DENTIST_IMAGE_BUCKET}/`;
-  const index = url.indexOf(marker);
-
-  if (index === -1) {
-    return null;
-  }
-
-  const pathWithQuery = url.slice(index + marker.length);
-  const [path] = pathWithQuery.split("?");
-
-  return decodeURIComponent(path);
-}
-
-function fileExtensionFrom(file: File) {
-  const fromName = file.name.split(".").pop()?.toLowerCase();
-
-  if (fromName && /^[a-z0-9]+$/.test(fromName)) {
-    return fromName;
-  }
-
-  const fromType = file.type.split("/")[1]?.toLowerCase();
-
-  if (fromType && /^[a-z0-9.+-]+$/.test(fromType)) {
-    return fromType.replace("jpeg", "jpg");
-  }
-
-  return "jpg";
-}
 
 function sanitizeRedirectPath(path: string) {
   if (path.startsWith("/staff/dentists")) {
@@ -125,45 +94,28 @@ export async function saveDentistProfile(formData: FormData) {
   let profilePhotoPath = existingProfilePhotoPath;
 
   if (removeProfilePhoto && existingProfilePhotoPath) {
-    const existingBucketPath = extractBucketPathFromPublicUrl(
-      existingProfilePhotoPath,
-    );
-    if (existingBucketPath) {
-      await supabase.storage
-        .from(DENTIST_IMAGE_BUCKET)
-        .remove([existingBucketPath]);
-    }
+    await removeDentistImage(supabase, existingProfilePhotoPath);
     profilePhotoPath = null;
   }
 
   if (profilePhotoFile instanceof File && profilePhotoFile.size > 0) {
-    const fileExtension = fileExtensionFrom(profilePhotoFile);
-    const folder = validation.data.profileId || "unassigned";
-    const storagePath = `dentists/${folder}/${Date.now()}-${randomUUID()}.${fileExtension}`;
-    const bytes = Buffer.from(await profilePhotoFile.arrayBuffer());
-    const { error: uploadError } = await supabase.storage
-      .from(DENTIST_IMAGE_BUCKET)
-      .upload(storagePath, bytes, {
-        contentType: profilePhotoFile.type || undefined,
-        upsert: false,
+    try {
+      profilePhotoPath = await uploadDentistImage(supabase, {
+        profileId: validation.data.profileId,
+        file: profilePhotoFile,
+        publicBaseUrl: env.url,
       });
-
-    if (uploadError) {
-      redirectWithStatus(uploadError.message, "error", redirectTo);
+    } catch (uploadError) {
+      const message =
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Unable to upload dentist image.";
+      redirectWithStatus(message, "error", redirectTo);
     }
 
     if (existingProfilePhotoPath) {
-      const existingBucketPath = extractBucketPathFromPublicUrl(
-        existingProfilePhotoPath,
-      );
-      if (existingBucketPath) {
-        await supabase.storage
-          .from(DENTIST_IMAGE_BUCKET)
-          .remove([existingBucketPath]);
-      }
+      await removeDentistImage(supabase, existingProfilePhotoPath);
     }
-
-    profilePhotoPath = `${env.url}/storage/v1/object/public/${DENTIST_IMAGE_BUCKET}/${storagePath}`;
   }
 
   const payload = {
