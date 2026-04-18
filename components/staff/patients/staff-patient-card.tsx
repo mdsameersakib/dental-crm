@@ -11,7 +11,7 @@ export function StaffPatientCard({ patient, href }: StaffPatientCardProps) {
   return (
     <Link
       href={href}
-      className="group block rounded-[1.4rem] border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--color-primary)]/30 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]"
+      className="group flex h-full flex-col rounded-[1.4rem] border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--color-primary)]/30 hover:shadow-[0_18px_40px_rgba(15,23,42,0.08)]"
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
@@ -42,7 +42,7 @@ export function StaffPatientCard({ patient, href }: StaffPatientCardProps) {
         </p>
       </div>
 
-      <div className="mt-4 flex items-center justify-between text-sm">
+      <div className="mt-auto pt-4 flex items-center justify-between text-sm">
         <span className="font-medium text-slate-500">
           {patient.lastVisitAt ? "Record active" : "No visits yet"}
         </span>

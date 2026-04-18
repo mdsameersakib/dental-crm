@@ -74,6 +74,7 @@ export async function saveService(formData: FormData) {
     name: validation.data.name,
     short_description: validation.data.shortDescription,
     full_description: validation.data.fullDescription,
+    recommended_aftercare: validation.data.recommendedAftercare,
     icon_name: validation.data.iconName,
     image_path: serviceImagePath,
     base_price: validation.data.basePrice,

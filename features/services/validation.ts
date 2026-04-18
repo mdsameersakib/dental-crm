@@ -4,6 +4,7 @@ export type ServiceInput = {
   name: string;
   shortDescription: string | null;
   fullDescription: string | null;
+  recommendedAftercare: string | null;
   iconName: string | null;
   basePrice: number | null;
   durationMin: number | null;
@@ -47,6 +48,10 @@ export function validateServiceForm(formData: FormData): ValidationResult {
   const shortDescription = getTrimmedField(formData, "short_description");
   const fullDescription = getTrimmedField(formData, "full_description");
   const iconName = getTrimmedField(formData, "icon_name");
+  const recommendedAftercare = getTrimmedField(
+    formData,
+    "recommended_aftercare",
+  );
   const basePriceRaw = getTrimmedField(formData, "base_price");
   const durationMinRaw = getTrimmedField(formData, "duration_min");
   const displayOrderRaw = getTrimmedField(formData, "display_order");
@@ -81,6 +86,7 @@ export function validateServiceForm(formData: FormData): ValidationResult {
       name,
       shortDescription: shortDescription || null,
       fullDescription: fullDescription || null,
+      recommendedAftercare: recommendedAftercare || null,
       iconName: iconName || null,
       basePrice: basePrice.value,
       durationMin: durationMin.value,

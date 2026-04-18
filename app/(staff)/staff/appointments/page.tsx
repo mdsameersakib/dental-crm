@@ -99,23 +99,23 @@ export default async function StaffAppointmentsPage({
           </p>
         </div>
       ) : (
-        <div className="grid justify-center gap-4 [grid-template-columns:repeat(auto-fill,minmax(320px,380px))]">
+        <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(320px,380px))]">
           {appointments.map((appointment) => (
             <article
               key={appointment.id}
-              className="w-full rounded-[1.4rem] border border-slate-200 bg-white p-5 shadow-sm"
+              className="flex h-full w-full flex-col rounded-[1.4rem] border border-slate-200 bg-white p-5 shadow-sm"
             >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
                   <p className="text-lg font-semibold text-slate-900">
                     {appointment.patientName}
                   </p>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <p className="mt-1 truncate text-sm text-slate-600">
                     {appointment.patientEmail || "No patient email"}
                   </p>
                 </div>
                 <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${appointmentStatusColorMap[appointment.status]}`}
+                  className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${appointmentStatusColorMap[appointment.status]}`}
                 >
                   {appointment.status}
                 </span>
@@ -158,7 +158,7 @@ export default async function StaffAppointmentsPage({
 
               <form
                 action={updateAppointmentStatus}
-                className="mt-4 grid gap-2"
+                className="mt-auto grid gap-2 pt-4"
               >
                 <input
                   type="hidden"

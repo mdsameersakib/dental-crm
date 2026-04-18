@@ -54,7 +54,7 @@ export default async function ServicesPage() {
               {services.map((service) => (
                 <article
                   key={service.slug}
-                  className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-[rgba(189,201,200,0.2)]"
+                  className="flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-[rgba(189,201,200,0.2)]"
                 >
                   {service.imageUrl ? (
                     <div className="h-44 overflow-hidden">
@@ -72,7 +72,7 @@ export default async function ServicesPage() {
                     </div>
                   )}
 
-                  <div className="p-5">
+                  <div className="flex flex-1 flex-col p-5">
                     <div className="mb-4 flex items-start justify-between gap-3">
                       <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[var(--color-primary-fixed)]">
                         <span className="material-symbols-outlined text-[var(--color-primary)]">
@@ -91,7 +91,7 @@ export default async function ServicesPage() {
                       {service.fullDescription}
                     </p>
 
-                    <div className="mt-5 flex items-center justify-between border-t border-[var(--color-outline-variant)]/20 pt-3 text-sm">
+                    <div className="mt-auto flex items-center justify-between border-t border-[var(--color-outline-variant)]/20 pt-3 text-sm">
                       <span className="text-xs font-medium text-[var(--color-on-surface-variant)] sm:text-sm">
                         {service.durationLabel}
                       </span>

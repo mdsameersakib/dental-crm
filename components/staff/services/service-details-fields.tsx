@@ -1,5 +1,6 @@
 type ServiceDetailsFieldsProps = {
   fullDescription: string;
+  recommendedAftercare: string;
   basePrice: number | null;
   durationMin: number | null;
   defaultDisplayOrder: number;
@@ -11,6 +12,7 @@ type ServiceDetailsFieldsProps = {
 
 export function ServiceDetailsFields({
   fullDescription,
+  recommendedAftercare,
   basePrice,
   durationMin,
   defaultDisplayOrder,
@@ -31,15 +33,27 @@ export function ServiceDetailsFields({
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-        <label className="grid text-sm font-medium text-slate-700">
-          <textarea
-            name="full_description"
-            defaultValue={fullDescription}
-            rows={8}
-            placeholder="Full description"
-            className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition-colors hover:border-slate-300 focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-500/30"
-          />
-        </label>
+        <div className="grid gap-4">
+          <label className="grid text-sm font-medium text-slate-700">
+            <textarea
+              name="full_description"
+              defaultValue={fullDescription}
+              rows={8}
+              placeholder="Full description"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition-colors hover:border-slate-300 focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-500/30"
+            />
+          </label>
+          <label className="grid gap-2 text-sm font-medium text-slate-700">
+            <span>Recommended aftercare</span>
+            <textarea
+              name="recommended_aftercare"
+              defaultValue={recommendedAftercare}
+              rows={6}
+              placeholder="Default aftercare guidance staff can reuse later for this service"
+              className="rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition-colors hover:border-slate-300 focus:border-teal-500 focus-visible:ring-2 focus-visible:ring-teal-500/30"
+            />
+          </label>
+        </div>
 
         <div className="grid h-fit gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <h3 className="font-heading text-lg font-bold text-slate-900">

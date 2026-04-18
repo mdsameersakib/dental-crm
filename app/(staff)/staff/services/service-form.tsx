@@ -74,6 +74,7 @@ export function ServiceForm({
         </section>
         <ServiceDetailsFields
           fullDescription={service?.full_description ?? ""}
+          recommendedAftercare={service?.recommended_aftercare ?? ""}
           basePrice={service?.base_price ?? null}
           durationMin={service?.duration_min ?? null}
           defaultDisplayOrder={defaultDisplayOrder}

@@ -8,7 +8,7 @@ type StaffServiceCardProps = {
 
 export function StaffServiceCard({ service }: StaffServiceCardProps) {
   return (
-    <article className="overflow-hidden rounded-[1.25rem] border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <article className="flex h-full flex-col overflow-hidden rounded-[1.25rem] border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
       {service.image_path ? (
         <div className="h-28 overflow-hidden">
           <img
@@ -25,7 +25,7 @@ export function StaffServiceCard({ service }: StaffServiceCardProps) {
         </div>
       )}
 
-      <div className="grid gap-3 p-3.5">
+      <div className="grid flex-1 gap-3 p-3.5">
         <div className="flex flex-wrap items-center gap-1.5">
           <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-slate-600">
             {service.slug}
@@ -99,7 +99,7 @@ export function StaffServiceCard({ service }: StaffServiceCardProps) {
           </div>
         </dl>
 
-        <div className="flex items-center justify-between gap-3 border-t border-slate-200 pt-3">
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-200 pt-3">
           <p className="text-xs text-slate-500">
             {service.image_path ? "Image attached" : "No image added"}
           </p>

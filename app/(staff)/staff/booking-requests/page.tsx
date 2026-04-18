@@ -97,24 +97,26 @@ export default async function StaffBookingRequestsPage({
           </p>
         </div>
       ) : (
-        <div className="grid justify-center gap-4 [grid-template-columns:repeat(auto-fill,minmax(320px,380px))]">
+        <div className="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(320px,380px))]">
           {requests.map((request) => (
             <article
               key={request.id}
-              className="w-full rounded-[1.4rem] border border-slate-200 bg-white p-5 shadow-sm"
+              className="flex h-full w-full flex-col rounded-[1.4rem] border border-slate-200 bg-white p-5 shadow-sm"
             >
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
                   <p className="text-lg font-semibold text-slate-900">
                     {request.patient_name}
                   </p>
-                  <p className="mt-1 text-sm text-slate-600">{request.email}</p>
-                  <p className="text-sm text-slate-500">
+                  <p className="mt-1 truncate text-sm text-slate-600">
+                    {request.email}
+                  </p>
+                  <p className="truncate text-sm text-slate-500">
                     {request.phone || "Phone not provided"}
                   </p>
                 </div>
                 <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${bookingRequestStatusColorMap[request.status]}`}
+                  className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${bookingRequestStatusColorMap[request.status]}`}
                 >
                   {request.status}
                 </span>
@@ -155,7 +157,7 @@ export default async function StaffBookingRequestsPage({
                 </div>
               </dl>
 
-              <div className="mt-4 flex items-center justify-between border-t border-slate-200 pt-4">
+              <div className="mt-auto flex items-center justify-between border-t border-slate-200 pt-4">
                 <p className="text-xs text-slate-500">
                   Submitted{" "}
                   {new Intl.DateTimeFormat("en-US", {

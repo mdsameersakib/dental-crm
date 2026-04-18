@@ -27,7 +27,7 @@ export function StaffDentistCard({ dentist }: StaffDentistCardProps) {
   const availableDays = availableDaySet.size;
 
   return (
-    <article className="group overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_45px_rgba(10,24,29,0.12)]">
+    <article className="group flex h-full flex-col overflow-hidden rounded-[1.6rem] border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_22px_45px_rgba(10,24,29,0.12)]">
       <div className="relative h-48 overflow-hidden bg-[linear-gradient(135deg,#d9efee_0%,#edf4f8_100%)]">
         {dentist.profile_photo_path ? (
           <img
@@ -63,7 +63,7 @@ export function StaffDentistCard({ dentist }: StaffDentistCardProps) {
         )}
       </div>
 
-      <div className="grid gap-3 p-4">
+      <div className="grid flex-1 gap-3 p-4">
         <p className="line-clamp-2 text-sm text-slate-600">
           {dentist.short_bio || "No short bio added yet."}
         </p>
@@ -129,7 +129,7 @@ export function StaffDentistCard({ dentist }: StaffDentistCardProps) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between border-t border-slate-200 pt-3">
+        <div className="mt-auto flex items-center justify-between border-t border-slate-200 pt-3">
           <p className="text-xs text-slate-500">{dentist.email}</p>
           <Link
             href={`/staff/dentists/${dentist.id}`}

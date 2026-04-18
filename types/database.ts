@@ -699,6 +699,7 @@ export type Database = {
           is_featured: boolean;
           is_published: boolean;
           name: string;
+          recommended_aftercare: string | null;
           short_description: string | null;
           slug: string;
           updated_at: string;
@@ -718,6 +719,7 @@ export type Database = {
           is_featured?: boolean;
           is_published?: boolean;
           name: string;
+          recommended_aftercare?: string | null;
           short_description?: string | null;
           slug: string;
           updated_at?: string;
@@ -737,6 +739,7 @@ export type Database = {
           is_featured?: boolean;
           is_published?: boolean;
           name?: string;
+          recommended_aftercare?: string | null;
           short_description?: string | null;
           slug?: string;
           updated_at?: string;

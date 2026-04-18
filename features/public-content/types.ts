@@ -4,6 +4,7 @@ export type PublicService = {
   name: string;
   shortDescription: string;
   fullDescription: string;
+  recommendedAftercare: string | null;
   iconName: string;
   imageUrl: string | null;
   durationLabel: string;

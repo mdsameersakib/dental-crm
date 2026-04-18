@@ -14,6 +14,7 @@ export type StaffService = Pick<
   | "image_path"
   | "base_price"
   | "duration_min"
+  | "recommended_aftercare"
   | "is_active"
   | "is_published"
   | "is_featured"
@@ -25,7 +26,7 @@ export async function getServicesForStaff() {
   const { data } = await supabase
     .from("services")
     .select(
-      "id, slug, name, short_description, full_description, icon_name, image_path, base_price, duration_min, is_active, is_published, is_featured, display_order",
+      "id, slug, name, short_description, full_description, icon_name, image_path, base_price, duration_min, recommended_aftercare, is_active, is_published, is_featured, display_order",
     )
     .order("display_order", { ascending: true })
     .order("created_at", { ascending: true });
@@ -38,7 +39,7 @@ export async function getServiceForStaff(serviceId: string) {
   const { data } = await supabase
     .from("services")
     .select(
-      "id, slug, name, short_description, full_description, icon_name, image_path, base_price, duration_min, is_active, is_published, is_featured, display_order",
+      "id, slug, name, short_description, full_description, icon_name, image_path, base_price, duration_min, recommended_aftercare, is_active, is_published, is_featured, display_order",
     )
     .eq("id", serviceId)
     .maybeSingle();

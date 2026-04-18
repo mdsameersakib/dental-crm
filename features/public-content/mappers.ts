@@ -75,6 +75,7 @@ export function mapPublicServices(
     | "name"
     | "short_description"
     | "full_description"
+    | "recommended_aftercare"
     | "icon_name"
     | "image_path"
     | "base_price"
@@ -91,6 +92,7 @@ export function mapPublicServices(
       service.full_description ??
       service.short_description ??
       "Tailored treatment planning and care.",
+    recommendedAftercare: service.recommended_aftercare,
     iconName: service.icon_name ?? "stethoscope",
     imageUrl: service.image_path ?? null,
     durationLabel: formatDuration(service.duration_min),

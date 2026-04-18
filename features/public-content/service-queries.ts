@@ -10,7 +10,7 @@ async function readPublishedServices(limit?: number) {
   let query = supabase
     .from("services")
     .select(
-      "id, slug, name, short_description, full_description, icon_name, image_path, base_price, duration_min",
+      "id, slug, name, short_description, full_description, recommended_aftercare, icon_name, image_path, base_price, duration_min",
     )
     .eq("is_active", true)
     .eq("is_published", true)
@@ -30,6 +30,7 @@ async function readPublishedServices(limit?: number) {
     | "name"
     | "short_description"
     | "full_description"
+    | "recommended_aftercare"
     | "icon_name"
     | "image_path"
     | "base_price"
