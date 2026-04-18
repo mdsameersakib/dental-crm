@@ -12,6 +12,13 @@ This map reflects only the currently implemented surfaces after cleanup.
 - `/book` -> `app/(public)/book/page.tsx`
 - Public layout/shell -> `app/(public)/layout.tsx`, `components/public/public-site-shell.tsx`
 
+### Patient Portal
+- `/patient/login` -> `app/patient/login/page.tsx`
+- `/patient/dashboard` -> `app/patient/(portal)/dashboard/page.tsx`
+- `/patient/appointments` -> `app/patient/(portal)/appointments/page.tsx`
+- `/patient/profile` -> `app/patient/(portal)/profile/page.tsx`
+- Patient layout/shell -> `app/patient/(portal)/layout.tsx`, `components/patient/patient-shell.tsx`
+
 ### Staff CRM
 - Staff auth gate/layout -> `app/(staff)/layout.tsx`, `lib/auth/session.ts`
 - `/staff/booking-requests` -> `app/(staff)/staff/booking-requests/page.tsx`
@@ -51,6 +58,12 @@ This map reflects only the currently implemented surfaces after cleanup.
 - Settings/staff access data -> `features/settings/admin.ts`
 - Landing content save helper -> `features/public-content/admin.ts`
 
+### Patient portal reads and actions
+- Patient account provisioning/linking -> `features/patient-portal/account.ts`
+- Patient dashboard/appointments/profile reads -> `features/patient-portal/queries.ts`
+- Patient follow-up request logic -> `features/patient-portal/follow-up.ts`
+- Patient profile save helper -> `features/patient-portal/profile.ts`
+
 ### Supabase clients and env
 - Server client -> `lib/supabase/server.ts`
 - Admin client -> `lib/supabase/admin.ts`
@@ -70,12 +83,17 @@ This map reflects only the currently implemented surfaces after cleanup.
 - Staff settings/invite/toggle/reset -> `app/(staff)/staff/settings/actions.ts`
 - Auth actions (sign-in/sign-out/password reset request) -> `app/auth/actions.ts`
 - Staff onboarding completion -> `app/auth/staff-onboarding/actions.ts`
+- Patient magic-link auth -> `app/patient/actions.ts`
+- Patient follow-up request submit -> `app/patient/(portal)/dashboard/actions.ts`
+- Patient profile save -> `app/patient/(portal)/profile/actions.ts`
 
 ## 4) UI Shell Components
 
 - Public shell/header/footer -> `components/public/public-site-shell.tsx`
 - Public FAQ interactive block -> `components/public/landing-interactive.tsx`
+- Patient shell/top navigation -> `components/patient/patient-shell.tsx`
 - Staff shell/sidebar -> `components/staff/staff-shell.tsx`
+- Patient nav config -> `features/patient-portal/navigation.ts`
 - Staff nav config -> `features/staff/navigation.ts`
 - Auth shell -> `components/ui/auth-layout.tsx`
 - Shared confirm button -> `components/ui/confirm-submit-button.tsx`
@@ -85,7 +103,11 @@ This map reflects only the currently implemented surfaces after cleanup.
 - Change public hero/services/dentists/contact section UI: `app/(public)/page.tsx`
 - Change book page UI or form fields: `app/(public)/book/page.tsx`
 - Change booking insert logic: `app/(public)/book/actions.ts`
+- Change patient portal UI: `app/patient/(portal)/*`, `components/patient/*`
+- Change patient follow-up request logic: `features/patient-portal/follow-up.ts`
+- Change patient portal data queries: `features/patient-portal/*`
 - Change services card/form behavior in staff: `app/(staff)/staff/services/*`
 - Change dentists card/form/schedule behavior in staff: `app/(staff)/staff/dentists/*`
 - Change staff account invite/active/reset logic: `app/(staff)/staff/settings/actions.ts`
+- Change patient navigation items: `features/patient-portal/navigation.ts`
 - Change staff sidebar items: `features/staff/navigation.ts`

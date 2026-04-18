@@ -23,3 +23,7 @@ export function isLandingManagerRole(role: AppRole) {
 export function isAdminRole(role: AppRole) {
   return role === "admin";
 }
+
+export function isPatientRole(role: AppRole) {
+  return role === "patient";
+}

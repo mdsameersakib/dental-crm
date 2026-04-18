@@ -8,13 +8,16 @@ import { staffNavigationSections } from "@/features/staff/navigation";
 
 type StaffShellProps = {
   children: React.ReactNode;
+  signOutAction: (formData: FormData) => void | Promise<void>;
 };
 
 function StaffSidebarContent({
   pathname,
+  signOutAction,
   onNavigate,
 }: {
   pathname: string;
+  signOutAction: (formData: FormData) => void | Promise<void>;
   onNavigate?: () => void;
 }) {
   return (
@@ -85,11 +88,25 @@ function StaffSidebarContent({
           </div>
         ))}
       </nav>
+
+      <div className="border-t border-[var(--color-outline-variant)]/20 p-3">
+        <form action={signOutAction}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-3 rounded-2xl border border-slate-200/80 bg-white/90 px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:bg-white hover:text-slate-900"
+          >
+            <span className="material-symbols-outlined text-[20px]">
+              logout
+            </span>
+            Log Out
+          </button>
+        </form>
+      </div>
     </>
   );
 }
 
-export function StaffShell({ children }: StaffShellProps) {
+export function StaffShell({ children, signOutAction }: StaffShellProps) {
   const pathname = usePathname();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const lastPathnameRef = useRef(pathname);
@@ -145,13 +162,17 @@ export function StaffShell({ children }: StaffShellProps) {
         >
           <StaffSidebarContent
             pathname={pathname}
+            signOutAction={signOutAction}
             onNavigate={() => setIsMobileNavOpen(false)}
           />
         </aside>
       </div>
 
       <aside className="fixed left-0 top-0 z-50 hidden h-screen w-64 flex-col overflow-hidden border-r border-[var(--color-outline-variant)]/20 bg-[linear-gradient(180deg,#f8fbfb_0%,#eef4f4_100%)] shadow-[18px_0_40px_rgba(15,35,35,0.06)] lg:flex">
-        <StaffSidebarContent pathname={pathname} />
+        <StaffSidebarContent
+          pathname={pathname}
+          signOutAction={signOutAction}
+        />
       </aside>
 
       <main className="px-5 py-8 lg:ml-64 lg:px-8 lg:py-10">

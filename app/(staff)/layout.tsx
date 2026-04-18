@@ -1,3 +1,4 @@
+import { signOutStaff } from "@/app/auth/actions";
 import { StaffShell } from "@/components/staff/staff-shell";
 import { requireStaffProfile } from "@/lib/auth/session";
 
@@ -16,5 +17,5 @@ async function StaffLayoutInner({
 }>) {
   await requireStaffProfile();
 
-  return <StaffShell>{children}</StaffShell>;
+  return <StaffShell signOutAction={signOutStaff}>{children}</StaffShell>;
 }

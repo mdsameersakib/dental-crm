@@ -42,7 +42,7 @@ yarn-error.log*
 
 # vercel
 .vercel
-
+PROJECT_WALKTHROUGH.md
 
 # typescript
 *.tsbuildinfo

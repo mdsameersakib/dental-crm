@@ -45,6 +45,13 @@ export const appointmentStatusColorMap: Record<AppointmentStatus, string> = {
   no_show: "bg-amber-100 text-amber-700",
 };
 
+export function getAppointmentStatusLabel(status: AppointmentStatus) {
+  return (
+    appointmentStatusOptions.find((option) => option.value === status)?.label ??
+    status
+  );
+}
+
 export function formatBookingDate(date: string | null) {
   if (!date) {
     return "Not selected";
