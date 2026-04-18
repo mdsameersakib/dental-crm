@@ -24,6 +24,11 @@ export const staffNavigationSections: StaffNavigationSection[] = [
         label: "Appointments",
         icon: "calendar_today",
       },
+      {
+        href: "/staff/patients",
+        label: "Patients",
+        icon: "groups",
+      },
     ],
   },
   {

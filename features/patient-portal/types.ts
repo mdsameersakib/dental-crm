@@ -39,4 +39,11 @@ export type PatientPortalProfileFormData = {
   email: string;
   phone: string;
   address: string;
+  dateOfBirth: string;
+  gender: string;
+  bloodType: string;
+  allergiesText: string;
+  currentMedicationsText: string;
+  emergencyContactName: string;
+  emergencyContactPhone: string;
 };

@@ -1,4 +1,6 @@
 import { PatientPageHeader } from "@/components/patient/patient-page-header";
+import { ContactDetailsCard } from "@/components/patient/profile/contact-details-card";
+import { HealthDetailsCard } from "@/components/patient/profile/health-details-card";
 import { FlashBanner } from "@/components/staff/flash-banner";
 import { getPatientProfileFormData } from "@/features/patient-portal/queries";
 import { requirePatientProfile } from "@/lib/auth/session";
@@ -17,7 +19,10 @@ export default async function PatientProfilePage({
 }: PatientProfilePageProps) {
   const patient = await requirePatientProfile("/patient/profile");
   const params = await searchParams;
-  const profile = await getPatientProfileFormData(patient.id);
+  const profile = await getPatientProfileFormData(
+    patient.id,
+    patient.patientProfileId,
+  );
 
   return (
     <section className="space-y-8">
@@ -30,92 +35,12 @@ export default async function PatientProfilePage({
       <FlashBanner error={params.error} success={params.success} />
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
-        <form
-          action={savePatientProfile}
-          className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm"
-        >
-          <div className="grid gap-5 md:grid-cols-2">
-            <div className="grid gap-2">
-              <label
-                htmlFor="first_name"
-                className="text-sm font-semibold text-slate-700"
-              >
-                First Name
-              </label>
-              <input
-                id="first_name"
-                name="first_name"
-                defaultValue={profile.firstName}
-                required
-                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-teal-500"
-              />
-            </div>
-            <div className="grid gap-2">
-              <label
-                htmlFor="last_name"
-                className="text-sm font-semibold text-slate-700"
-              >
-                Last Name
-              </label>
-              <input
-                id="last_name"
-                name="last_name"
-                defaultValue={profile.lastName}
-                required
-                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-teal-500"
-              />
-            </div>
-            <div className="grid gap-2">
-              <label
-                htmlFor="email"
-                className="text-sm font-semibold text-slate-700"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                value={profile.email}
-                readOnly
-                disabled
-                className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500"
-              />
-            </div>
-            <div className="grid gap-2">
-              <label
-                htmlFor="phone"
-                className="text-sm font-semibold text-slate-700"
-              >
-                Phone
-              </label>
-              <input
-                id="phone"
-                name="phone"
-                type="tel"
-                defaultValue={profile.phone}
-                className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-teal-500"
-              />
-            </div>
-          </div>
-
-          <div className="mt-5 grid gap-2">
-            <label
-              htmlFor="address"
-              className="text-sm font-semibold text-slate-700"
-            >
-              Address
-            </label>
-            <textarea
-              id="address"
-              name="address"
-              rows={4}
-              defaultValue={profile.address}
-              className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-teal-500"
-            />
-          </div>
-
+        <form action={savePatientProfile} className="space-y-6">
+          <ContactDetailsCard profile={profile} />
+          <HealthDetailsCard profile={profile} />
           <button
             type="submit"
-            className="mt-6 rounded-2xl bg-[var(--color-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(0,101,101,0.18)]"
+            className="rounded-2xl bg-[var(--color-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(0,101,101,0.18)]"
           >
             Save Changes
           </button>

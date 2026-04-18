@@ -63,10 +63,10 @@ export function PublicSiteShell({ children }: PublicSiteShellProps) {
 
           <div className="flex items-center gap-3">
             <Link
-              href="/auth/login"
+              href="/login"
               className="hidden rounded-full border border-[var(--color-outline-variant)]/30 px-4 py-2.5 text-sm font-semibold text-[var(--color-foreground)] transition-colors hover:border-[var(--color-primary)]/30 hover:text-[var(--color-primary)] md:inline-flex"
             >
-              Staff Login
+              Login
             </Link>
 
             <Link
@@ -110,7 +110,7 @@ export function PublicSiteShell({ children }: PublicSiteShellProps) {
             </h3>
             <div className="mt-5 grid gap-3 text-sm text-[var(--color-on-surface-variant)]">
               <Link href="/#contact">Contact</Link>
-              <Link href="/auth/login">Staff Login</Link>
+              <Link href="/login">Login</Link>
             </div>
           </div>
         </div>
