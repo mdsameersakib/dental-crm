@@ -68,6 +68,8 @@ type RegistryAggregate = {
   registryKey: string;
   patientProfileId: string | null;
   profileId: string | null;
+  firstName: string;
+  lastName: string;
   name: string;
   email: string;
   phone: string;
@@ -94,6 +96,18 @@ function buildName(
 ) {
   const joined = `${firstName ?? ""} ${lastName ?? ""}`.trim();
   return joined || fallback?.trim() || "Unknown patient";
+}
+
+function splitName(fullName: string | null | undefined) {
+  const parts = sanitizeText(fullName).split(/\s+/).filter(Boolean);
+  if (parts.length === 0) {
+    return { firstName: "", lastName: "" };
+  }
+
+  return {
+    firstName: parts[0] ?? "",
+    lastName: parts.slice(1).join(" "),
+  };
 }
 
 function normalizeEmail(value: string | null | undefined) {
@@ -235,6 +249,8 @@ async function buildPatientRegistry() {
     registryKey: string;
     patientProfileId?: string | null;
     profileId?: string | null;
+    firstName?: string | null;
+    lastName?: string | null;
     name?: string | null;
     email?: string | null;
     phone?: string | null;
@@ -256,6 +272,16 @@ async function buildPatientRegistry() {
       }
       if (!existing.profileId && input.profileId) {
         existing.profileId = input.profileId;
+      }
+      if (sanitizeText(input.firstName) && !existing.firstName) {
+        existing.firstName = sanitizeText(input.firstName);
+      }
+      if (
+        sanitizeText(input.lastName) &&
+        !existing.lastName &&
+        existing.firstName
+      ) {
+        existing.lastName = sanitizeText(input.lastName);
       }
       if (sanitizeText(input.name) && existing.name === "Unknown patient") {
         existing.name = sanitizeText(input.name);
@@ -320,6 +346,8 @@ async function buildPatientRegistry() {
       registryKey: input.registryKey,
       patientProfileId: input.patientProfileId ?? null,
       profileId: input.profileId ?? null,
+      firstName: sanitizeText(input.firstName),
+      lastName: sanitizeText(input.lastName),
       name: sanitizeText(input.name) || "Unknown patient",
       email: sanitizeText(input.email),
       phone: sanitizeText(input.phone),
@@ -364,6 +392,8 @@ async function buildPatientRegistry() {
       registryKey,
       patientProfileId: row.id,
       profileId: row.profile_id,
+      firstName: profile?.first_name,
+      lastName: profile?.last_name,
       name: buildName(profile?.first_name, profile?.last_name),
       email: profile?.email,
       phone: profile?.phone,
@@ -404,6 +434,7 @@ async function buildPatientRegistry() {
     const patient = ensurePatient({
       registryKey,
       patientProfileId: row.patient_id,
+      ...splitName(row.patient_name),
       name: row.patient_name,
       email: row.patient_email,
     });
@@ -485,6 +516,7 @@ async function buildPatientRegistry() {
 
     const patient = ensurePatient({
       registryKey,
+      ...splitName(row.patient_name),
       name: row.patient_name,
       email: row.email,
       phone: row.phone,
@@ -537,6 +569,8 @@ export async function getPatientDetailForStaff(registryKey: string) {
 
   return {
     ...toSummary(patient),
+    firstName: patient.firstName,
+    lastName: patient.lastName,
     address: patient.address,
     dateOfBirth: patient.dateOfBirth,
     gender: patient.gender,
@@ -582,6 +616,73 @@ export async function savePatientMedicalProfileForStaff(input: {
       current_medications: splitLines(input.currentMedicationsText),
       emergency_contact_name: input.emergencyContactName || null,
       emergency_contact_phone: input.emergencyContactPhone || null,
+    })
+    .eq("id", input.patientProfileId);
+}
+
+export async function savePatientContactProfileForStaff(input: {
+  profileId: string;
+  patientProfileId: string | null;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  address: string;
+}) {
+  const supabase = createAdminClient();
+  const normalizedEmail = input.email.trim().toLowerCase();
+
+  const { data: currentProfile, error: currentProfileError } = await supabase
+    .from("profiles")
+    .select("email")
+    .eq("id", input.profileId)
+    .maybeSingle();
+
+  if (currentProfileError) {
+    return { error: currentProfileError };
+  }
+
+  if (
+    normalizedEmail &&
+    currentProfile?.email &&
+    normalizedEmail !== currentProfile.email.toLowerCase()
+  ) {
+    const { error: authError } = await supabase.auth.admin.updateUserById(
+      input.profileId,
+      {
+        email: normalizedEmail,
+        email_confirm: true,
+      },
+    );
+
+    if (authError) {
+      return { error: authError };
+    }
+  }
+
+  const profileResult = await supabase
+    .from("profiles")
+    .update({
+      first_name: input.firstName,
+      last_name: input.lastName,
+      email: normalizedEmail,
+      phone: input.phone || null,
+      address: input.address || null,
+    })
+    .eq("id", input.profileId);
+
+  if (profileResult.error) {
+    return profileResult;
+  }
+
+  if (!input.patientProfileId) {
+    return { error: null };
+  }
+
+  return supabase
+    .from("patient_profiles")
+    .update({
+      address: input.address || null,
     })
     .eq("id", input.patientProfileId);
 }

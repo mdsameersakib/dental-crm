@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { updatePatientMedicalProfile } from "@/app/(staff)/staff/patients/actions";
+import {
+  updatePatientContactProfile,
+  updatePatientMedicalProfile,
+} from "@/app/(staff)/staff/patients/actions";
 import {
   appointmentStatusColorMap,
   bookingRequestStatusColorMap,
@@ -12,9 +15,12 @@ import type { StaffPatientDetail } from "@/features/patients/types";
 type StaffPatientDetailPanelProps = {
   patient: StaffPatientDetail;
   closeHref: string;
+  editContactHref: string;
+  viewContactHref: string;
   editMedicalHref: string;
   viewMedicalHref: string;
   query: string;
+  isEditingContact: boolean;
   isEditingMedical: boolean;
 };
 
@@ -48,9 +54,12 @@ function formatLabel(value: string) {
 export function StaffPatientDetailPanel({
   patient,
   closeHref,
+  editContactHref,
+  viewContactHref,
   editMedicalHref,
   viewMedicalHref,
   query,
+  isEditingContact,
   isEditingMedical,
 }: StaffPatientDetailPanelProps) {
   return (
@@ -103,35 +112,182 @@ export function StaffPatientDetailPanel({
           <div className="mt-6 grid gap-6 2xl:grid-cols-[minmax(0,1fr)_320px]">
             <div className="space-y-6">
               <section className="rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="font-heading text-2xl font-bold text-slate-900">
-                  Contact
-                </h3>
-                <dl className="mt-4 grid gap-4 text-sm text-slate-700 sm:grid-cols-2">
-                  <div>
-                    <dt className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
-                      Phone
-                    </dt>
-                    <dd className="mt-1 text-slate-900">
-                      {patient.phone || "Not provided"}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
-                      Email
-                    </dt>
-                    <dd className="mt-1 break-all text-slate-900">
-                      {patient.email || "Not provided"}
-                    </dd>
-                  </div>
-                  <div className="sm:col-span-2">
-                    <dt className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
-                      Address
-                    </dt>
-                    <dd className="mt-1 text-slate-900">
-                      {patient.address || "Not provided"}
-                    </dd>
-                  </div>
-                </dl>
+                <div className="flex items-start justify-between gap-4">
+                  <h3 className="font-heading text-2xl font-bold text-slate-900">
+                    Contact
+                  </h3>
+                  {patient.profileId ? (
+                    isEditingContact ? (
+                      <Link
+                        href={viewContactHref}
+                        className="rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700"
+                      >
+                        Cancel
+                      </Link>
+                    ) : (
+                      <Link
+                        href={editContactHref}
+                        className="rounded-xl bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white"
+                      >
+                        Edit Contact
+                      </Link>
+                    )
+                  ) : null}
+                </div>
+
+                {patient.profileId ? (
+                  isEditingContact ? (
+                    <form
+                      action={updatePatientContactProfile}
+                      className="mt-4 space-y-4"
+                    >
+                      <input
+                        type="hidden"
+                        name="profile_id"
+                        value={patient.profileId}
+                      />
+                      <input
+                        type="hidden"
+                        name="patient_profile_id"
+                        value={patient.patientProfileId ?? ""}
+                      />
+                      <input
+                        type="hidden"
+                        name="patient"
+                        value={patient.registryKey}
+                      />
+                      <input type="hidden" name="q" value={query} />
+
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div className="grid gap-2">
+                          <label
+                            htmlFor="first_name"
+                            className="text-sm font-semibold text-slate-700"
+                          >
+                            First Name
+                          </label>
+                          <input
+                            id="first_name"
+                            name="first_name"
+                            defaultValue={patient.firstName}
+                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-teal-500"
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <label
+                            htmlFor="last_name"
+                            className="text-sm font-semibold text-slate-700"
+                          >
+                            Last Name
+                          </label>
+                          <input
+                            id="last_name"
+                            name="last_name"
+                            defaultValue={patient.lastName}
+                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-teal-500"
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <label
+                            htmlFor="email"
+                            className="text-sm font-semibold text-slate-700"
+                          >
+                            Email
+                          </label>
+                          <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            defaultValue={patient.email}
+                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-teal-500"
+                          />
+                        </div>
+                        <div className="grid gap-2">
+                          <label
+                            htmlFor="phone"
+                            className="text-sm font-semibold text-slate-700"
+                          >
+                            Phone
+                          </label>
+                          <input
+                            id="phone"
+                            name="phone"
+                            defaultValue={patient.phone}
+                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-teal-500"
+                          />
+                        </div>
+                        <div className="grid gap-2 md:col-span-2">
+                          <label
+                            htmlFor="address"
+                            className="text-sm font-semibold text-slate-700"
+                          >
+                            Address
+                          </label>
+                          <textarea
+                            id="address"
+                            name="address"
+                            rows={3}
+                            defaultValue={patient.address}
+                            className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-teal-500"
+                          />
+                        </div>
+                      </div>
+
+                      <p className="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                        Updating email here also updates the linked Supabase
+                        Auth account so patient portal sign-in stays in sync.
+                      </p>
+
+                      <button
+                        type="submit"
+                        className="rounded-xl bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white"
+                      >
+                        Save Contact Details
+                      </button>
+                    </form>
+                  ) : (
+                    <dl className="mt-4 grid gap-4 text-sm text-slate-700 sm:grid-cols-2">
+                      <div>
+                        <dt className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                          Name
+                        </dt>
+                        <dd className="mt-1 text-slate-900">
+                          {patient.name || "Not provided"}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                          Phone
+                        </dt>
+                        <dd className="mt-1 text-slate-900">
+                          {patient.phone || "Not provided"}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                          Email
+                        </dt>
+                        <dd className="mt-1 break-all text-slate-900">
+                          {patient.email || "Not provided"}
+                        </dd>
+                      </div>
+                      <div className="sm:col-span-2">
+                        <dt className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+                          Address
+                        </dt>
+                        <dd className="mt-1 text-slate-900">
+                          {patient.address || "Not provided"}
+                        </dd>
+                      </div>
+                    </dl>
+                  )
+                ) : (
+                  <p className="mt-4 text-sm leading-7 text-slate-600">
+                    Contact details for guest-only records are currently
+                    read-only. Once the record is linked to a real patient
+                    profile, staff can edit the saved contact information here.
+                  </p>
+                )}
               </section>
 
               <section className="rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-sm">
@@ -176,7 +332,7 @@ export function StaffPatientDetailPanel({
                       />
                       <input type="hidden" name="q" value={query} />
 
-                      <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="grid gap-4 md:[grid-template-columns:repeat(2,minmax(0,1fr))]">
                         <div className="grid gap-2">
                           <label
                             htmlFor="date_of_birth"
@@ -268,7 +424,7 @@ export function StaffPatientDetailPanel({
                         </div>
                       </div>
 
-                      <div className="grid gap-4 sm:grid-cols-2">
+                      <div className="grid gap-4 md:[grid-template-columns:repeat(2,minmax(0,1fr))]">
                         <div className="grid gap-2">
                           <label
                             htmlFor="allergies"
@@ -282,7 +438,7 @@ export function StaffPatientDetailPanel({
                             rows={5}
                             defaultValue={patient.allergies.join("\n")}
                             placeholder="One allergy per line"
-                            className="w-full min-w-0 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-teal-500"
+                            className="w-full min-w-0 resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-teal-500"
                           />
                         </div>
                         <div className="grid gap-2">
@@ -298,7 +454,7 @@ export function StaffPatientDetailPanel({
                             rows={5}
                             defaultValue={patient.currentMedications.join("\n")}
                             placeholder="One medication per line"
-                            className="w-full min-w-0 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-teal-500"
+                            className="w-full min-w-0 resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition-colors placeholder:text-slate-400 focus:border-teal-500"
                           />
                         </div>
                       </div>

@@ -53,6 +53,8 @@ export type StaffPatientBookingRequestHistoryItem = {
 };
 
 export type StaffPatientDetail = StaffPatientSummary & {
+  firstName: string;
+  lastName: string;
   address: string;
   dateOfBirth: string;
   gender: string;

@@ -3,7 +3,10 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { savePatientMedicalProfileForStaff } from "@/features/patients/admin";
+import {
+  savePatientContactProfileForStaff,
+  savePatientMedicalProfileForStaff,
+} from "@/features/patients/admin";
 import { requireStaffProfile } from "@/lib/auth/session";
 
 function buildPatientsRedirect(input: {
@@ -81,6 +84,66 @@ export async function updatePatientMedicalProfile(formData: FormData) {
   buildPatientsRedirect({
     type: "success",
     message: "Medical profile updated.",
+    patient: patientRegistryKey,
+    query,
+  });
+}
+
+export async function updatePatientContactProfile(formData: FormData) {
+  await requireStaffProfile();
+
+  const profileId = String(formData.get("profile_id") ?? "").trim();
+  const patientProfileId = String(
+    formData.get("patient_profile_id") ?? "",
+  ).trim();
+  const patientRegistryKey = String(formData.get("patient") ?? "").trim();
+  const query = String(formData.get("q") ?? "").trim();
+  const firstName = String(formData.get("first_name") ?? "").trim();
+  const lastName = String(formData.get("last_name") ?? "").trim();
+  const email = String(formData.get("email") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
+  const address = String(formData.get("address") ?? "").trim();
+
+  if (!profileId || !patientRegistryKey) {
+    buildPatientsRedirect({
+      type: "error",
+      message: "Unable to update this patient contact profile.",
+      query,
+    });
+  }
+
+  if (!firstName || !lastName || !email) {
+    buildPatientsRedirect({
+      type: "error",
+      message: "First name, last name, and email are required.",
+      patient: patientRegistryKey,
+      query,
+    });
+  }
+
+  const result = await savePatientContactProfileForStaff({
+    profileId,
+    patientProfileId: patientProfileId || null,
+    firstName,
+    lastName,
+    email,
+    phone,
+    address,
+  });
+
+  if (result.error) {
+    buildPatientsRedirect({
+      type: "error",
+      message: "Unable to save contact details right now.",
+      patient: patientRegistryKey,
+      query,
+    });
+  }
+
+  revalidatePath("/staff/patients");
+  buildPatientsRedirect({
+    type: "success",
+    message: "Contact details updated.",
     patient: patientRegistryKey,
     query,
   });

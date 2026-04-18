@@ -3,6 +3,11 @@
 import { revalidatePath } from "next/cache";
 
 import {
+  createManualAppointmentForStaff,
+  readManualAppointmentDraft,
+  redirectManualAppointmentCreate,
+} from "@/features/bookings/manual-appointment";
+import {
   redirectAppointmentsStatus,
   sanitizeAppointmentsRedirectPath,
 } from "@/features/bookings/staff-actions";
@@ -74,4 +79,24 @@ export async function updateAppointmentStatus(formData: FormData) {
     "success",
     redirectTo,
   );
+}
+
+export async function createManualAppointment(formData: FormData) {
+  const staff = await requireStaffProfile();
+  const draft = readManualAppointmentDraft(formData);
+
+  const result = await createManualAppointmentForStaff({
+    bookedBy: staff.id,
+    draft,
+  });
+
+  if (result.error) {
+    redirectManualAppointmentCreate("error", result.error, draft);
+  }
+
+  revalidatePath("/staff/appointments");
+  revalidatePath("/staff/patients");
+  redirectManualAppointmentCreate("success", "Appointment created.", {
+    patientQuery: draft.patientQuery,
+  });
 }

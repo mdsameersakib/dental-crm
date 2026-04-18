@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FlashBanner } from "@/components/staff/flash-banner";
 import { getAppointmentsForStaff } from "@/features/bookings/admin";
 import {
@@ -54,9 +55,17 @@ export default async function StaffAppointmentsPage({
             from one staff view.
           </p>
         </div>
-        <div className="rounded-2xl bg-slate-100 px-4 py-3 text-sm text-slate-700">
-          {appointments.length} appointment
-          {appointments.length === 1 ? "" : "s"}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="rounded-2xl bg-slate-100 px-4 py-3 text-sm text-slate-700">
+            {appointments.length} appointment
+            {appointments.length === 1 ? "" : "s"}
+          </div>
+          <Link
+            href="/staff/appointments/new"
+            className="rounded-2xl bg-[var(--color-primary)] px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:brightness-105"
+          >
+            New Appointment
+          </Link>
         </div>
       </div>
 

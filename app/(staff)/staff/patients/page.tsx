@@ -39,6 +39,7 @@ export default async function StaffPatientsPage({
 }: StaffPatientsPageProps) {
   const params = await searchParams;
   const query = (params.q ?? "").trim();
+  const isEditingContact = params.edit === "contact";
   const isEditingMedical = params.edit === "medical";
   const [patients, selectedPatient] = await Promise.all([
     getPatientsForStaff(query),
@@ -111,6 +112,15 @@ export default async function StaffPatientsPage({
         <StaffPatientDetailPanel
           patient={selectedPatient}
           closeHref={buildPatientsHref(query)}
+          editContactHref={buildPatientsHref(
+            query,
+            selectedPatient.registryKey,
+            "contact",
+          )}
+          viewContactHref={buildPatientsHref(
+            query,
+            selectedPatient.registryKey,
+          )}
           editMedicalHref={buildPatientsHref(
             query,
             selectedPatient.registryKey,
@@ -121,6 +131,7 @@ export default async function StaffPatientsPage({
             selectedPatient.registryKey,
           )}
           query={query}
+          isEditingContact={isEditingContact}
           isEditingMedical={isEditingMedical}
         />
       ) : null}
