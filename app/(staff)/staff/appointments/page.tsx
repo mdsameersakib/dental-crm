@@ -204,6 +204,14 @@ export default async function StaffAppointmentsPage({
                   >
                     Update
                   </button>
+                  {appointment.patient_id ? (
+                    <Link
+                      href={`/staff/treatments/new?appointment_id=${appointment.id}`}
+                      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-center text-sm font-semibold text-slate-700"
+                    >
+                      Create Treatment
+                    </Link>
+                  ) : null}
                 </div>
               </form>
 

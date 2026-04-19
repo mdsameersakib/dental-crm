@@ -559,6 +559,31 @@ export async function getPatientsForStaff(query = "") {
     .map(toSummary);
 }
 
+export async function getPatientInfoMapForStaff(patientIds: string[]) {
+  if (patientIds.length === 0) {
+    return new Map<string, { name: string; email: string }>();
+  }
+
+  const patientIdSet = new Set(patientIds);
+  const patients = await buildPatientRegistry();
+
+  return new Map(
+    patients
+      .filter(
+        (patient) =>
+          patient.patientProfileId &&
+          patientIdSet.has(patient.patientProfileId),
+      )
+      .map((patient) => [
+        patient.patientProfileId as string,
+        {
+          name: patient.name || "Unknown patient",
+          email: patient.email,
+        },
+      ]),
+  );
+}
+
 export async function getPatientDetailForStaff(registryKey: string) {
   const patients = await buildPatientRegistry();
   const patient = patients.find((entry) => entry.registryKey === registryKey);

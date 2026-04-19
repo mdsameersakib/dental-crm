@@ -580,9 +580,19 @@ export function StaffPatientDetailPanel({
               </section>
 
               <section className="rounded-[1.6rem] border border-slate-200 bg-white p-5 shadow-sm">
-                <h3 className="font-heading text-2xl font-bold text-slate-900">
-                  Treatments
-                </h3>
+                <div className="flex items-start justify-between gap-4">
+                  <h3 className="font-heading text-2xl font-bold text-slate-900">
+                    Treatments
+                  </h3>
+                  {patient.patientProfileId ? (
+                    <Link
+                      href={`/staff/treatments/new?patient_id=${patient.patientProfileId}`}
+                      className="rounded-xl bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white"
+                    >
+                      New Treatment
+                    </Link>
+                  ) : null}
+                </div>
                 <div className="mt-4 space-y-3">
                   {patient.treatments.length === 0 ? (
                     <p className="text-sm text-slate-600">
@@ -617,6 +627,14 @@ export function StaffPatientDetailPanel({
                             {treatment.aftercareInstructions}
                           </p>
                         ) : null}
+                        <div className="mt-3">
+                          <Link
+                            href={`/staff/treatments/${treatment.id}`}
+                            className="text-sm font-semibold text-teal-700"
+                          >
+                            Edit treatment
+                          </Link>
+                        </div>
                       </article>
                     ))
                   )}

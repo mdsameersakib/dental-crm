@@ -13,7 +13,11 @@ export const staffNavigationSections: StaffNavigationSection[] = [
   {
     title: "Operations",
     links: [
-      // Dashboard was planned early, but it's intentionally hidden for the MVP scope.
+      {
+        href: "/staff/dashboard",
+        label: "Dashboard",
+        icon: "space_dashboard",
+      },
       {
         href: "/staff/booking-requests",
         label: "Booking Requests",
@@ -28,6 +32,11 @@ export const staffNavigationSections: StaffNavigationSection[] = [
         href: "/staff/patients",
         label: "Patients",
         icon: "groups",
+      },
+      {
+        href: "/staff/treatments",
+        label: "Treatments",
+        icon: "healing",
       },
     ],
   },
