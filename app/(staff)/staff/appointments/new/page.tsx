@@ -5,6 +5,7 @@ import type { ManualAppointmentDraft } from "@/features/bookings/manual-appointm
 import { getDentistsForStaff } from "@/features/dentists/admin";
 import {
   getPatientDetailForStaff,
+  getPatientDetailForStaffByPatientProfileId,
   getPatientsForStaff,
 } from "@/features/patients/admin";
 import { getServicesForStaff } from "@/features/services/admin";
@@ -17,6 +18,7 @@ type StaffNewAppointmentPageProps = {
     success?: string;
     q?: string;
     patient?: string;
+    patient_profile_id?: string;
     service_id?: string;
     dentist_id?: string;
     date?: string;
@@ -60,6 +62,7 @@ export default async function StaffNewAppointmentPage({
   const params = await searchParams;
   const patientQuery = (params.q ?? "").trim();
   const selectedPatientKeyFromParams = (params.patient ?? "").trim();
+  const selectedPatientProfileId = (params.patient_profile_id ?? "").trim();
 
   const [services, dentists, patientResults, selectedPatient] =
     await Promise.all([
@@ -68,7 +71,9 @@ export default async function StaffNewAppointmentPage({
       getPatientsForStaff(patientQuery),
       selectedPatientKeyFromParams
         ? getPatientDetailForStaff(selectedPatientKeyFromParams)
-        : Promise.resolve(null),
+        : selectedPatientProfileId
+          ? getPatientDetailForStaffByPatientProfileId(selectedPatientProfileId)
+          : Promise.resolve(null),
     ]);
 
   const autoSelectedPatientKey =
@@ -88,6 +93,8 @@ export default async function StaffNewAppointmentPage({
   const draft = buildDraft(params, selectedService?.duration_min ?? 30);
   if (autoSelectedPatientKey) {
     draft.selectedPatient = autoSelectedPatientKey;
+  } else if (selectedPatient?.registryKey) {
+    draft.selectedPatient = selectedPatient.registryKey;
   }
 
   return (

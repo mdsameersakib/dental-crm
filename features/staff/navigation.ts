@@ -34,6 +34,11 @@ export const staffNavigationSections: StaffNavigationSection[] = [
         icon: "groups",
       },
       {
+        href: "/staff/waitlist",
+        label: "Waitlist",
+        icon: "hourglass_top",
+      },
+      {
         href: "/staff/treatments",
         label: "Treatments",
         icon: "healing",

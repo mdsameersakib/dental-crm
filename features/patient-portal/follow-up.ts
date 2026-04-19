@@ -1,6 +1,7 @@
 import { createBookingRequest } from "@/features/bookings/mutations";
 import { getPublishedDentists } from "@/features/public-content/dentist-queries";
 import { getPublishedServices } from "@/features/public-content/service-queries";
+import { createWaitlistEntry } from "@/features/waitlist/admin";
 
 export async function getPatientFollowUpOptions() {
   const [services, dentists] = await Promise.all([
@@ -24,6 +25,7 @@ type PatientFollowUpValidationResult =
         preferredDate: string;
         preferredTime: string;
         notes: string | null;
+        joinWaitlist: boolean;
       };
     }
   | {
@@ -44,6 +46,8 @@ export function validatePatientFollowUpRequest(
   const preferredDate = getTrimmedField(formData, "preferred_date");
   const preferredTime = getTrimmedField(formData, "preferred_time");
   const notes = getTrimmedField(formData, "notes");
+  const joinWaitlist =
+    String(formData.get("join_waitlist") ?? "").trim() === "yes";
 
   if (!phone || !serviceId || !preferredDate || !preferredTime) {
     return {
@@ -62,6 +66,7 @@ export function validatePatientFollowUpRequest(
       preferredDate,
       preferredTime,
       notes: notes || null,
+      joinWaitlist,
     },
   };
 }
@@ -75,7 +80,20 @@ export async function createPatientFollowUpRequest(input: {
   preferredDate: string;
   preferredTime: string;
   notes: string | null;
+  joinWaitlist: boolean;
+  patientProfileId?: string;
 }) {
+  if (input.joinWaitlist && input.patientProfileId) {
+    return createWaitlistEntry({
+      patientId: input.patientProfileId,
+      dentistId: input.preferredDentistId,
+      serviceId: input.serviceId,
+      preferredFrom: input.preferredDate,
+      preferredTo: input.preferredDate,
+      notes: input.notes,
+    });
+  }
+
   return createBookingRequest({
     patientName: input.patientName,
     email: input.email,

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import {
+  updatePatientArchiveState,
   updatePatientContactProfile,
   updatePatientMedicalProfile,
 } from "@/app/(staff)/staff/patients/actions";
@@ -82,12 +83,44 @@ export function StaffPatientDetailPanel({
               {patient.email || "No email provided"}
             </p>
           </div>
-          <Link
-            href={closeHref}
-            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
-          >
-            Close
-          </Link>
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            {patient.profileId ? (
+              <form action={updatePatientArchiveState}>
+                <input
+                  type="hidden"
+                  name="profile_id"
+                  value={patient.profileId}
+                />
+                <input
+                  type="hidden"
+                  name="patient"
+                  value={patient.registryKey}
+                />
+                <input type="hidden" name="q" value={query} />
+                <input
+                  type="hidden"
+                  name="next_state"
+                  value={patient.isArchived ? "restore" : "archive"}
+                />
+                <button
+                  type="submit"
+                  className={`rounded-full px-4 py-2 text-sm font-semibold ${
+                    patient.isArchived
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-rose-100 text-rose-700"
+                  }`}
+                >
+                  {patient.isArchived ? "Restore Patient" : "Archive Patient"}
+                </button>
+              </form>
+            ) : null}
+            <Link
+              href={closeHref}
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+            >
+              Close
+            </Link>
+          </div>
         </div>
 
         <div className="overflow-y-auto px-6 py-6">
@@ -107,6 +140,11 @@ export function StaffPatientDetailPanel({
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-slate-700">
               {patient.treatmentCount} treatments
             </span>
+            {patient.isArchived ? (
+              <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-rose-700">
+                Archived
+              </span>
+            ) : null}
           </div>
 
           <div className="mt-6 grid gap-6 2xl:grid-cols-[minmax(0,1fr)_320px]">
@@ -573,6 +611,16 @@ export function StaffPatientDetailPanel({
                             {appointment.notes}
                           </p>
                         ) : null}
+                        {patient.patientProfileId ? (
+                          <div className="mt-3">
+                            <Link
+                              href={`/staff/appointments/new?patient=${encodeURIComponent(patient.registryKey)}&notes=${encodeURIComponent("Follow-up from patient appointment history")}`}
+                              className="text-sm font-semibold text-teal-700"
+                            >
+                              Schedule follow-up
+                            </Link>
+                          </div>
+                        ) : null}
                       </article>
                     ))
                   )}
@@ -627,13 +675,21 @@ export function StaffPatientDetailPanel({
                             {treatment.aftercareInstructions}
                           </p>
                         ) : null}
-                        <div className="mt-3">
+                        <div className="mt-3 flex flex-wrap items-center gap-4">
                           <Link
                             href={`/staff/treatments/${treatment.id}`}
                             className="text-sm font-semibold text-teal-700"
                           >
                             Edit treatment
                           </Link>
+                          {patient.patientProfileId ? (
+                            <Link
+                              href={`/staff/appointments/new?patient=${encodeURIComponent(patient.registryKey)}${treatment.followUpDate ? `&date=${treatment.followUpDate}` : ""}&notes=${encodeURIComponent(`Follow-up from treatment: ${treatment.treatmentName}`)}`}
+                              className="text-sm font-semibold text-slate-700"
+                            >
+                              Schedule follow-up
+                            </Link>
+                          ) : null}
                         </div>
                       </article>
                     ))
@@ -660,6 +716,12 @@ export function StaffPatientDetailPanel({
                     <dt className="text-slate-500">Portal access</dt>
                     <dd className="font-medium text-slate-900">
                       {patient.accountLabel}
+                    </dd>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <dt className="text-slate-500">Account state</dt>
+                    <dd className="font-medium text-slate-900">
+                      {patient.isArchived ? "Archived" : "Active"}
                     </dd>
                   </div>
                 </dl>

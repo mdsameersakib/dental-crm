@@ -14,4 +14,9 @@ export const patientNavigationLinks = [
     label: "Profile",
     icon: "person",
   },
+  {
+    href: "/patient/help",
+    label: "Help",
+    icon: "chat",
+  },
 ] as const;

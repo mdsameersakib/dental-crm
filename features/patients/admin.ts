@@ -144,6 +144,8 @@ function createRegistryKey(input: {
 }
 
 function toSummary(patient: RegistryAggregate): StaffPatientSummary {
+  const isArchived = patient.hasAccount && patient.isActive === false;
+
   return {
     registryKey: patient.registryKey,
     patientProfileId: patient.patientProfileId,
@@ -152,6 +154,7 @@ function toSummary(patient: RegistryAggregate): StaffPatientSummary {
     email: patient.email,
     phone: patient.phone,
     hasAccount: patient.hasAccount,
+    isArchived,
     accountLabel: patient.hasAccount ? "Has account" : "Guest only",
     appointmentCount: patient.appointments.length,
     treatmentCount: patient.treatments.length,
@@ -617,6 +620,36 @@ export async function getPatientDetailForStaff(registryKey: string) {
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     ),
   } satisfies StaffPatientDetail;
+}
+
+export async function getPatientDetailForStaffByPatientProfileId(
+  patientProfileId: string,
+) {
+  const patients = await buildPatientRegistry();
+  const patient = patients.find(
+    (entry) => entry.patientProfileId === patientProfileId,
+  );
+
+  if (!patient) {
+    return null;
+  }
+
+  return getPatientDetailForStaff(patient.registryKey);
+}
+
+export async function savePatientAccountStateForStaff(input: {
+  profileId: string;
+  nextIsActive: boolean;
+}) {
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      is_active: input.nextIsActive,
+    })
+    .eq("id", input.profileId);
+
+  return { error };
 }
 
 export async function savePatientMedicalProfileForStaff(input: {

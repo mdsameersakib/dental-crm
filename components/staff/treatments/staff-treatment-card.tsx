@@ -12,11 +12,13 @@ import type { StaffTreatmentSummary } from "@/features/treatments/types";
 type StaffTreatmentCardProps = {
   treatment: StaffTreatmentSummary;
   href: string;
+  followUpHref?: string;
 };
 
 export function StaffTreatmentCard({
   treatment,
   href,
+  followUpHref,
 }: StaffTreatmentCardProps) {
   return (
     <article className="flex h-full flex-col rounded-[1.4rem] border border-slate-200 bg-white p-5 shadow-sm">
@@ -84,13 +86,21 @@ export function StaffTreatmentCard({
         </p>
       ) : null}
 
-      <div className="mt-auto pt-4">
+      <div className="mt-auto flex flex-wrap items-center gap-4 pt-4">
         <Link
           href={href}
           className="inline-flex rounded-xl bg-[var(--color-primary)] px-4 py-2.5 text-sm font-semibold text-white"
         >
           Edit treatment
         </Link>
+        {followUpHref ? (
+          <Link
+            href={followUpHref}
+            className="text-sm font-semibold text-slate-700"
+          >
+            Schedule follow-up
+          </Link>
+        ) : null}
       </div>
     </article>
   );

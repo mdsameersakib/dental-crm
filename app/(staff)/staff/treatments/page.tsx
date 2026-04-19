@@ -113,6 +113,7 @@ export default async function StaffTreatmentsPage({
                 query,
                 selectedStatus,
               )}
+              followUpHref={`/staff/appointments/new?patient_profile_id=${treatment.patientId}&dentist_id=${treatment.dentistId}${treatment.serviceId ? `&service_id=${treatment.serviceId}` : ""}${treatment.followUpDate ? `&date=${treatment.followUpDate}` : ""}&notes=${encodeURIComponent(`Follow-up from treatment: ${treatment.treatmentName}`)}`}
             />
           ))}
         </div>

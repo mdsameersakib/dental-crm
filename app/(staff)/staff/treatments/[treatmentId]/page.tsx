@@ -1,6 +1,8 @@
 import { notFound } from "next/navigation";
 
 import { FlashBanner } from "@/components/staff/flash-banner";
+import { TreatmentDocumentsCard } from "@/components/staff/treatments/treatment-documents-card";
+import { getTreatmentDocumentsForStaff } from "@/features/documents/admin";
 import {
   getTreatmentFormOptions,
   getTreatmentForStaff,
@@ -34,7 +36,10 @@ export default async function StaffTreatmentDetailPage({
     params,
     searchParams,
   ]);
-  const treatment = await getTreatmentForStaff(treatmentId);
+  const [treatment, documents] = await Promise.all([
+    getTreatmentForStaff(treatmentId),
+    getTreatmentDocumentsForStaff(treatmentId),
+  ]);
 
   if (!treatment) {
     notFound();
@@ -67,8 +72,10 @@ export default async function StaffTreatmentDetailPage({
         value={value}
         options={options}
         treatment={treatment}
+        followUpHref={`/staff/appointments/new?patient_profile_id=${treatment.patientId}&dentist_id=${treatment.dentistId}${treatment.serviceId ? `&service_id=${treatment.serviceId}` : ""}${treatment.followUpDate ? `&date=${treatment.followUpDate}` : ""}&notes=${encodeURIComponent(`Follow-up from treatment: ${treatment.treatmentName}`)}`}
         redirectTo={buildTreatmentsHref(query, status)}
       />
+      <TreatmentDocumentsCard treatment={treatment} documents={documents} />
     </section>
   );
 }

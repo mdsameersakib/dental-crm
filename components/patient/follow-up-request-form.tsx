@@ -126,6 +126,18 @@ export function FollowUpRequestForm({
         />
       </div>
 
+      <label className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-700">
+        <input
+          type="checkbox"
+          name="join_waitlist"
+          value="yes"
+          className="mt-1 h-4 w-4 rounded border-slate-300 text-[var(--color-primary)]"
+        />
+        <span className="leading-6">
+          Add me to the waitlist if the requested slot is unavailable.
+        </span>
+      </label>
+
       <button
         type="submit"
         className="rounded-2xl bg-[var(--color-primary)] px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_28px_rgba(0,101,101,0.18)]"

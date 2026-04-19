@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import {
+  savePatientAccountStateForStaff,
   savePatientContactProfileForStaff,
   savePatientMedicalProfileForStaff,
 } from "@/features/patients/admin";
@@ -144,6 +145,48 @@ export async function updatePatientContactProfile(formData: FormData) {
   buildPatientsRedirect({
     type: "success",
     message: "Contact details updated.",
+    patient: patientRegistryKey,
+    query,
+  });
+}
+
+export async function updatePatientArchiveState(formData: FormData) {
+  await requireStaffProfile();
+
+  const profileId = String(formData.get("profile_id") ?? "").trim();
+  const patientRegistryKey = String(formData.get("patient") ?? "").trim();
+  const query = String(formData.get("q") ?? "").trim();
+  const nextState = String(formData.get("next_state") ?? "").trim();
+
+  if (!profileId || !patientRegistryKey) {
+    buildPatientsRedirect({
+      type: "error",
+      message: "Unable to update this patient account state.",
+      query,
+    });
+  }
+
+  const nextIsActive = nextState === "restore";
+  const result = await savePatientAccountStateForStaff({
+    profileId,
+    nextIsActive,
+  });
+
+  if (result.error) {
+    buildPatientsRedirect({
+      type: "error",
+      message: "Unable to update patient access right now.",
+      patient: patientRegistryKey,
+      query,
+    });
+  }
+
+  revalidatePath("/staff/patients");
+  buildPatientsRedirect({
+    type: "success",
+    message: nextIsActive
+      ? "Patient account restored."
+      : "Patient account archived.",
     patient: patientRegistryKey,
     query,
   });

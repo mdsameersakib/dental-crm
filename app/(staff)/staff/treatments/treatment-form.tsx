@@ -11,6 +11,7 @@ type TreatmentFormProps = {
   value: StaffTreatmentFormValue;
   options: TreatmentFormOptions;
   treatment?: StaffTreatmentSummary | null;
+  followUpHref?: string;
   redirectTo: string;
 };
 
@@ -19,6 +20,7 @@ export function TreatmentForm({
   value,
   options,
   treatment,
+  followUpHref,
   redirectTo,
 }: TreatmentFormProps) {
   const isEdit = mode === "edit";
@@ -52,6 +54,14 @@ export function TreatmentForm({
             >
               Back
             </Link>
+            {isEdit && followUpHref ? (
+              <Link
+                href={followUpHref}
+                className="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
+              >
+                Schedule Follow-up
+              </Link>
+            ) : null}
             <button
               type="submit"
               className="rounded-xl bg-[var(--color-primary)] px-4 py-2 text-sm font-semibold text-white"

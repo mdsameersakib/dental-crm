@@ -39,6 +39,8 @@ export async function submitPatientFollowUpRequest(formData: FormData) {
     preferredDate: validation.data.preferredDate,
     preferredTime: validation.data.preferredTime,
     notes: validation.data.notes,
+    joinWaitlist: validation.data.joinWaitlist,
+    patientProfileId: profile.patientProfileId,
   });
 
   if (result.error) {
@@ -51,6 +53,8 @@ export async function submitPatientFollowUpRequest(formData: FormData) {
   revalidatePath("/patient/dashboard");
   redirectDashboardStatus(
     "success",
-    "Your request has been sent. Staff will confirm the appointment with you.",
+    validation.data.joinWaitlist
+      ? "You have been added to the waitlist. Staff will contact you when a suitable slot opens."
+      : "Your request has been sent. Staff will confirm the appointment with you.",
   );
 }

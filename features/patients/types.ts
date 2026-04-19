@@ -13,6 +13,7 @@ export type StaffPatientSummary = {
   email: string;
   phone: string;
   hasAccount: boolean;
+  isArchived: boolean;
   accountLabel: string;
   appointmentCount: number;
   treatmentCount: number;

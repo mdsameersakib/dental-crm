@@ -4,6 +4,10 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import {
+  addTreatmentDocumentForStaff,
+  deleteTreatmentDocumentForStaff,
+} from "@/features/documents/admin";
+import {
   getAppointmentPrefillForTreatment,
   getServiceDefaultsForTreatment,
 } from "@/features/treatments/admin";
@@ -186,4 +190,91 @@ export async function deleteTreatment(formData: FormData) {
   revalidatePath("/patient/dashboard");
   revalidatePath("/patient/appointments");
   redirectWithStatus("Treatment deleted.", "success", "/staff/treatments");
+}
+
+export async function uploadTreatmentDocument(formData: FormData) {
+  const staff = await requireStaffProfile();
+  const treatmentId = String(formData.get("treatment_id") ?? "").trim();
+  const patientId = String(formData.get("patient_id") ?? "").trim();
+  const appointmentId =
+    String(formData.get("appointment_id") ?? "").trim() || null;
+  const documentType = String(
+    formData.get("document_type") ?? "other",
+  ).trim() as Database["public"]["Enums"]["document_type"];
+  const visibleToPatient =
+    String(formData.get("visible_to_patient") ?? "yes").trim() === "yes";
+  const notes = String(formData.get("document_notes") ?? "").trim() || null;
+  const file = formData.get("document_file");
+
+  if (
+    !treatmentId ||
+    !patientId ||
+    !(file instanceof File) ||
+    file.size === 0
+  ) {
+    redirectWithStatus(
+      "Choose a file before uploading a treatment document.",
+      "error",
+      treatmentId ? `/staff/treatments/${treatmentId}` : "/staff/treatments",
+    );
+  }
+
+  const result = await addTreatmentDocumentForStaff({
+    treatmentId,
+    patientId,
+    appointmentId,
+    uploadedBy: staff.id,
+    file,
+    documentType,
+    notes,
+    isVisibleToPatient: visibleToPatient,
+  });
+
+  if (result.error) {
+    redirectWithStatus(
+      "Unable to upload the treatment document right now.",
+      "error",
+      `/staff/treatments/${treatmentId}`,
+    );
+  }
+
+  revalidatePath(`/staff/treatments/${treatmentId}`);
+  revalidatePath("/patient/dashboard");
+  redirectWithStatus(
+    "Treatment document uploaded.",
+    "success",
+    `/staff/treatments/${treatmentId}`,
+  );
+}
+
+export async function deleteTreatmentDocument(formData: FormData) {
+  await requireStaffProfile();
+  const documentId = String(formData.get("document_id") ?? "").trim();
+  const treatmentId = String(formData.get("treatment_id") ?? "").trim();
+
+  if (!documentId || !treatmentId) {
+    redirectWithStatus(
+      "Unable to remove this document.",
+      "error",
+      "/staff/treatments",
+    );
+  }
+
+  const result = await deleteTreatmentDocumentForStaff(documentId);
+
+  if (result.error) {
+    redirectWithStatus(
+      "Unable to delete this treatment document right now.",
+      "error",
+      `/staff/treatments/${treatmentId}`,
+    );
+  }
+
+  revalidatePath(`/staff/treatments/${treatmentId}`);
+  revalidatePath("/patient/dashboard");
+  redirectWithStatus(
+    "Treatment document deleted.",
+    "success",
+    `/staff/treatments/${treatmentId}`,
+  );
 }
