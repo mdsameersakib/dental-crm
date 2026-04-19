@@ -37,6 +37,20 @@ function getTrimmedField(formData: FormData, field: string) {
   return String(formData.get(field) ?? "").trim();
 }
 
+function buildWaitlistNotes(input: {
+  notes: string | null;
+  phone: string;
+  preferredTime: string;
+}) {
+  const parts = [
+    input.notes?.trim() || "",
+    `Phone: ${input.phone}`,
+    `Preferred time: ${input.preferredTime}`,
+  ].filter(Boolean);
+
+  return parts.join("\n");
+}
+
 export function validatePatientFollowUpRequest(
   formData: FormData,
 ): PatientFollowUpValidationResult {
@@ -90,7 +104,11 @@ export async function createPatientFollowUpRequest(input: {
       serviceId: input.serviceId,
       preferredFrom: input.preferredDate,
       preferredTo: input.preferredDate,
-      notes: input.notes,
+      notes: buildWaitlistNotes({
+        notes: input.notes,
+        phone: input.phone,
+        preferredTime: input.preferredTime,
+      }),
     });
   }
 

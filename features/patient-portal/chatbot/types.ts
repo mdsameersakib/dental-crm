@@ -12,6 +12,7 @@ export type PatientAssistantContext = {
     phone: string;
     email: string;
     address: string;
+    clinicHours: string[];
   };
   services: Array<{
     name: string;

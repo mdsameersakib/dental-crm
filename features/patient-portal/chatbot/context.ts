@@ -62,6 +62,48 @@ function formatWeeklyAvailability(scheduleRows: DentistScheduleRow[]) {
   });
 }
 
+function buildClinicHours(scheduleRows: DentistScheduleRow[]) {
+  const grouped = new Map<
+    Database["public"]["Enums"]["day_of_week"],
+    { start: string; end: string }
+  >();
+
+  for (const row of scheduleRows) {
+    if (!row.is_available) {
+      continue;
+    }
+
+    const existing = grouped.get(row.day_of_week);
+    if (!existing) {
+      grouped.set(row.day_of_week, {
+        start: row.start_time,
+        end: row.end_time,
+      });
+      continue;
+    }
+
+    grouped.set(row.day_of_week, {
+      start: row.start_time < existing.start ? row.start_time : existing.start,
+      end: row.end_time > existing.end ? row.end_time : existing.end,
+    });
+  }
+
+  if (grouped.size === 0) {
+    return ["Clinic hours are confirmed by staff."];
+  }
+
+  return Array.from(grouped.entries())
+    .sort(
+      (a, b) =>
+        ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].indexOf(a[0]) -
+        ["mon", "tue", "wed", "thu", "fri", "sat", "sun"].indexOf(b[0]),
+    )
+    .map(
+      ([day, range]) =>
+        `${dayLabelMap[day]}: ${range.start.slice(0, 5)}-${range.end.slice(0, 5)}`,
+    );
+}
+
 export async function buildPatientAssistantContext(input: {
   patientName: string;
   patientProfileId: string;
@@ -92,6 +134,9 @@ export async function buildPatientAssistantContext(input: {
       dentist_schedules: DentistScheduleRow[] | null;
     }
   >;
+  const allScheduleRows = dentistRows.flatMap(
+    (row) => row.dentist_schedules ?? [],
+  );
 
   return {
     patientName: input.patientName,
@@ -99,6 +144,7 @@ export async function buildPatientAssistantContext(input: {
       phone: contactPhone,
       email: contactEmail,
       address: clinicAddress,
+      clinicHours: buildClinicHours(allScheduleRows),
     },
     services: services.map((service) => ({
       name: service.name,

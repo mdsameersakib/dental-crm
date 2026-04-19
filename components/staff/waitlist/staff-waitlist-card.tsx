@@ -35,6 +35,14 @@ export function StaffWaitlistCard({ entry, action }: StaffWaitlistCardProps) {
       <dl className="mt-4 grid gap-3 rounded-xl bg-slate-50 p-3 text-sm text-slate-700 sm:grid-cols-2">
         <div>
           <dt className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+            Phone
+          </dt>
+          <dd className="mt-1 font-medium text-slate-900">
+            {entry.patientPhone || "Not provided"}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
             Service
           </dt>
           <dd className="mt-1 font-medium text-slate-900">
@@ -65,6 +73,14 @@ export function StaffWaitlistCard({ entry, action }: StaffWaitlistCardProps) {
           </dt>
           <dd className="mt-1 font-medium text-slate-900">
             {entry.preferredTo ? formatBookingDate(entry.preferredTo) : "Open"}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">
+            Preferred time
+          </dt>
+          <dd className="mt-1 font-medium text-slate-900">
+            {entry.preferredTime || "Flexible"}
           </dd>
         </div>
       </dl>

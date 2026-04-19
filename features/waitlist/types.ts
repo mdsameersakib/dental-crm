@@ -7,12 +7,14 @@ export type StaffWaitlistEntry = {
   patientId: string;
   patientName: string;
   patientEmail: string;
+  patientPhone: string | null;
   dentistId: string | null;
   dentistName: string | null;
   serviceId: string | null;
   serviceName: string | null;
   preferredFrom: string | null;
   preferredTo: string | null;
+  preferredTime: string | null;
   notes: string | null;
   status: WaitlistStatus;
   createdAt: string;

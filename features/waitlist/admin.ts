@@ -22,6 +22,42 @@ function readPreferredRangeValue(
   return typeof rawValue === "string" ? rawValue : null;
 }
 
+function extractTaggedNoteValue(notes: string | null, label: string) {
+  if (!notes) {
+    return null;
+  }
+
+  const prefix = `${label}:`;
+  const line = notes
+    .split("\n")
+    .map((entry) => entry.trim())
+    .find((entry) => entry.startsWith(prefix));
+
+  if (!line) {
+    return null;
+  }
+
+  return line.slice(prefix.length).trim() || null;
+}
+
+function stripTaggedNotes(notes: string | null) {
+  if (!notes) {
+    return null;
+  }
+
+  const cleaned = notes
+    .split("\n")
+    .map((entry) => entry.trim())
+    .filter(
+      (entry) =>
+        !entry.startsWith("Phone:") && !entry.startsWith("Preferred time:"),
+    )
+    .join("\n")
+    .trim();
+
+  return cleaned || null;
+}
+
 export async function getWaitlistEntriesForStaff() {
   const supabase = createAdminClient();
   const { data } = await supabase
@@ -59,6 +95,7 @@ export async function getWaitlistEntriesForStaff() {
         patientId: row.patient_id,
         patientName: patientMap.get(row.patient_id)?.name ?? "Unknown patient",
         patientEmail: patientMap.get(row.patient_id)?.email ?? "",
+        patientPhone: extractTaggedNoteValue(row.notes, "Phone"),
         dentistId: row.dentist_id,
         dentistName: row.dentist_id
           ? (dentistMap.get(row.dentist_id) ?? null)
@@ -72,7 +109,8 @@ export async function getWaitlistEntriesForStaff() {
           "from",
         ),
         preferredTo: readPreferredRangeValue(row.preferred_date_range, "to"),
-        notes: row.notes,
+        preferredTime: extractTaggedNoteValue(row.notes, "Preferred time"),
+        notes: stripTaggedNotes(row.notes),
         status: row.status,
         createdAt: row.created_at,
       }) satisfies StaffWaitlistEntry,

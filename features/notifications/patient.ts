@@ -37,6 +37,79 @@ function extractRecordKey(
   return typeof meta.recordKey === "string" ? meta.recordKey : null;
 }
 
+type DesiredNotification = {
+  recordKey: string;
+  insert: Database["public"]["Tables"]["notifications"]["Insert"];
+};
+
+function buildAppointmentReminder(input: {
+  profileId: string;
+  nowIso: string;
+  appointment: AppointmentReminderRow;
+  serviceName: string | null;
+  dentistName: string | null;
+}): DesiredNotification {
+  const recordKey = `appointment:${input.appointment.id}`;
+
+  return {
+    recordKey,
+    insert: {
+      user_id: input.profileId,
+      channel: "in_app",
+      type: APPOINTMENT_REMINDER_TYPE,
+      title: "Upcoming appointment",
+      body: `You have ${
+        input.serviceName ?? "an appointment"
+      } with ${input.dentistName ?? "your dentist"} on ${new Intl.DateTimeFormat(
+        "en-US",
+        { dateStyle: "medium", timeStyle: "short" },
+      ).format(new Date(input.appointment.start_at))}.`,
+      status: "sent",
+      sent_at: input.nowIso,
+      scheduled_for: input.appointment.start_at,
+      meta: {
+        recordId: input.appointment.id,
+        recordKey,
+      },
+    },
+  };
+}
+
+function buildFollowUpReminder(input: {
+  profileId: string;
+  nowIso: string;
+  treatment: FollowUpReminderRow;
+  serviceName: string | null;
+}): DesiredNotification {
+  const recordKey = `treatment:${input.treatment.id}`;
+
+  return {
+    recordKey,
+    insert: {
+      user_id: input.profileId,
+      channel: "in_app",
+      type: FOLLOW_UP_REMINDER_TYPE,
+      title: "Follow-up reminder",
+      body: `A follow-up is due for ${
+        input.treatment.treatment_name ||
+        input.serviceName ||
+        "your recent treatment"
+      } on ${new Intl.DateTimeFormat("en-US", {
+        dateStyle: "medium",
+      }).format(
+        new Date(`${input.treatment.follow_up_date}T00:00:00`),
+      )}. Staff can confirm the final appointment time.`,
+      status: "sent",
+      sent_at: input.nowIso,
+      scheduled_for: `${input.treatment.follow_up_date}T00:00:00.000Z`,
+      meta: {
+        recordId: input.treatment.id,
+        recordKey,
+      },
+    },
+  };
+}
+
 export async function ensurePatientNotifications(input: {
   profileId: string;
   patientProfileId: string;
@@ -82,10 +155,15 @@ export async function ensurePatientNotifications(input: {
   const existingNotifications = (existingNotificationData ??
     []) as NotificationRow[];
 
-  const seenKeys = new Set(
+  const existingByKey = new Map(
     existingNotifications
-      .map((entry) => extractRecordKey(entry.meta))
-      .filter((entry): entry is string => Boolean(entry)),
+      .map((entry) => {
+        const recordKey = extractRecordKey(entry.meta);
+        return recordKey ? ([recordKey, entry] as const) : null;
+      })
+      .filter((entry): entry is readonly [string, NotificationRow] =>
+        Boolean(entry),
+      ),
   );
 
   const dentistIds = Array.from(
@@ -103,63 +181,73 @@ export async function ensurePatientNotifications(input: {
     getServiceNameMap(serviceIds),
   ]);
 
-  const inserts: Database["public"]["Tables"]["notifications"]["Insert"][] = [];
+  const desiredNotifications = [
+    ...appointments.map((appointment) =>
+      buildAppointmentReminder({
+        profileId: input.profileId,
+        nowIso: now.toISOString(),
+        appointment,
+        serviceName: serviceMap.get(appointment.service_id ?? "") ?? null,
+        dentistName: dentistMap.get(appointment.dentist_id) ?? null,
+      }),
+    ),
+    ...followUps.map((treatment) =>
+      buildFollowUpReminder({
+        profileId: input.profileId,
+        nowIso: now.toISOString(),
+        treatment,
+        serviceName: serviceMap.get(treatment.service_id ?? "") ?? null,
+      }),
+    ),
+  ];
 
-  for (const appointment of appointments) {
-    const key = `appointment:${appointment.id}`;
-    if (seenKeys.has(key)) {
-      continue;
-    }
+  const desiredKeys = new Set(
+    desiredNotifications.map((notification) => notification.recordKey),
+  );
 
-    inserts.push({
-      user_id: input.profileId,
-      channel: "in_app",
-      type: APPOINTMENT_REMINDER_TYPE,
-      title: "Upcoming appointment",
-      body: `You have ${
-        serviceMap.get(appointment.service_id ?? "") ?? "an appointment"
-      } with ${dentistMap.get(appointment.dentist_id) ?? "your dentist"} on ${new Intl.DateTimeFormat(
-        "en-US",
-        { dateStyle: "medium", timeStyle: "short" },
-      ).format(new Date(appointment.start_at))}.`,
-      status: "sent",
-      sent_at: now.toISOString(),
-      scheduled_for: appointment.start_at,
-      meta: {
-        recordId: appointment.id,
-        recordKey: key,
-      },
-    });
-  }
+  const inserts = desiredNotifications
+    .filter((notification) => !existingByKey.has(notification.recordKey))
+    .map((notification) => notification.insert);
 
-  for (const treatment of followUps) {
-    const key = `treatment:${treatment.id}`;
-    if (seenKeys.has(key)) {
-      continue;
-    }
+  const updates = desiredNotifications
+    .map((notification) => {
+      const existing = existingByKey.get(notification.recordKey);
+      if (!existing) {
+        return null;
+      }
 
-    inserts.push({
-      user_id: input.profileId,
-      channel: "in_app",
-      type: FOLLOW_UP_REMINDER_TYPE,
-      title: "Follow-up reminder",
-      body: `A follow-up is due for ${
-        treatment.treatment_name ||
-        serviceMap.get(treatment.service_id ?? "") ||
-        "your recent treatment"
-      } on ${new Intl.DateTimeFormat("en-US", {
-        dateStyle: "medium",
-      }).format(
-        new Date(`${treatment.follow_up_date}T00:00:00`),
-      )}. Staff can confirm the final appointment time.`,
-      status: "sent",
-      sent_at: now.toISOString(),
-      scheduled_for: `${treatment.follow_up_date}T00:00:00.000Z`,
-      meta: {
-        recordId: treatment.id,
-        recordKey: key,
-      },
-    });
+      if (
+        existing.title === notification.insert.title &&
+        existing.body === notification.insert.body &&
+        existing.scheduled_for === notification.insert.scheduled_for
+      ) {
+        return null;
+      }
+
+      return supabase
+        .from("notifications")
+        .update({
+          title: notification.insert.title,
+          body: notification.insert.body,
+          scheduled_for: notification.insert.scheduled_for,
+          sent_at: notification.insert.sent_at,
+          status: existing.read_at ? existing.status : "sent",
+        })
+        .eq("id", existing.id);
+    })
+    .filter(Boolean);
+
+  const deleteIds = existingNotifications
+    .filter((entry) => {
+      const recordKey = extractRecordKey(entry.meta);
+      return recordKey ? !desiredKeys.has(recordKey) : false;
+    })
+    .map((entry) => entry.id);
+
+  await Promise.all(updates);
+
+  if (deleteIds.length > 0) {
+    await supabase.from("notifications").delete().in("id", deleteIds);
   }
 
   if (inserts.length > 0) {
@@ -198,14 +286,6 @@ export async function getPatientNotifications() {
     scheduledFor: row.scheduled_for,
     readAt: row.read_at,
   })) satisfies PatientNotificationItem[];
-
-  const unreadIds = rows
-    .filter((row) => row.status !== "read" && !row.readAt)
-    .map((row) => row.id);
-  if (unreadIds.length > 0) {
-    await markPatientNotificationsRead(unreadIds);
-  }
-
   return rows;
 }
 
