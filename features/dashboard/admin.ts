@@ -1,9 +1,11 @@
 import {
   getDentistNameMap,
-  getPatientInfoMap,
   getServiceNameMap,
 } from "@/features/bookings/lookups";
-import { getPatientsForStaff } from "@/features/patients/admin";
+import {
+  getPatientInfoMapForStaff,
+  getPatientsForStaff,
+} from "@/features/patients/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/types/database";
 
@@ -183,7 +185,7 @@ export async function getStaffDashboardData(): Promise<StaffDashboardData> {
   ];
 
   const [patientMap, serviceMap, dentistMap] = await Promise.all([
-    getPatientInfoMap(Array.from(new Set(appointmentPatientIds))),
+    getPatientInfoMapForStaff(Array.from(new Set(appointmentPatientIds))),
     getServiceNameMap(Array.from(new Set(serviceIds))),
     getDentistNameMap(Array.from(new Set(dentistIds))),
   ]);

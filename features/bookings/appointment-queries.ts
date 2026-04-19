@@ -1,11 +1,8 @@
+import { getPatientInfoMapForStaff } from "@/features/patients/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Database } from "@/types/database";
 
-import {
-  getDentistNameMap,
-  getPatientInfoMap,
-  getServiceNameMap,
-} from "./lookups";
+import { getDentistNameMap, getServiceNameMap } from "./lookups";
 import type {
   StaffActiveAppointmentSlot,
   StaffAppointment,
@@ -41,7 +38,7 @@ export async function getAppointmentsForStaff(
   ) as string[];
 
   const [patientMap, dentistMap, serviceMap] = await Promise.all([
-    getPatientInfoMap(patientIds),
+    getPatientInfoMapForStaff(patientIds),
     getDentistNameMap(dentistIds),
     getServiceNameMap(serviceIds),
   ]);
