@@ -12,6 +12,12 @@ import type { PublicDentistDetail } from "./types";
 type DentistScheduleRow =
   Database["public"]["Tables"]["dentist_schedules"]["Row"];
 
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value,
+  );
+}
+
 async function readPublishedDentists(limit?: number) {
   const admin = createAdminClient();
   let query = admin
@@ -58,14 +64,16 @@ export async function getPublicDentistDetail(
   dentistId: string,
 ): Promise<PublicDentistDetail | null> {
   const admin = createAdminClient();
-  const { data: dentist } = await admin
+  const baseQuery = admin
     .from("dentist_profiles")
     .select(
       "id, slug, short_bio, bio, specializations, education, profile_photo_path, years_of_experience, consultation_fee, is_accepting_patients, profiles!dentist_profiles_profile_id_fkey(first_name,last_name)",
     )
-    .or(`slug.eq.${dentistId},id.eq.${dentistId}`)
-    .eq("is_published", true)
-    .maybeSingle();
+    .eq("is_published", true);
+
+  const { data: dentist } = isUuid(dentistId)
+    ? await baseQuery.eq("id", dentistId).maybeSingle()
+    : await baseQuery.eq("slug", dentistId).maybeSingle();
 
   if (!dentist) {
     return null;
