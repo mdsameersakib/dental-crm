@@ -1,0 +1,54 @@
+============================================================
+           AI USAGE DECLARATION
+============================================================
+
+Name: Md. Sameer Sakib
+Student ID: 24241344
+Assignment: Dental CRM Project
+Date: 20/04/2026
+
+------------------------------------------------------------
+1. AI TOOLS USED (check all that apply)
+------------------------------------------------------------
+[ ] None
+[ ] ChatGPT
+[ ] GitHub Copilot
+[ ] Google Gemini
+[ ] Claude
+[ ] Cursor
+[✓] Other: Codex CLI
+
+------------------------------------------------------------
+2. PURPOSE OF AI USE (check all that apply)
+------------------------------------------------------------
+[ ] Learning/understanding concepts
+[ ] Debugging my code
+[✓] Generating code snippets
+[ ] Writing text content
+[ ] Design/styling ideas
+[✓] Image generation
+[✓] SQL Writing
+
+------------------------------------------------------------
+3. DESCRIPTION OF AI USE
+--------------------------------------------
+I used AI tools (Codex CLI) to generate the code files for this project. All design decisions, project planning, database design, repository structure, file structure, and refactoring planning were done entirely by me. While I had a clear understanding of all the technologies and techniques used throughout the project, I chose to use AI to write the actual code files rather than writing them manually.
+------------------------------------------------------------
+4. AI-ASSISTED SECTIONS
+------------------------------------------------------------
+List specific files/sections where AI helped significantly:
+
+    - app/*
+    - component/*
+    - features/*
+------------------------------------------------------------
+5. DECLARATION
+------------------------------------------------------------
+I declare that:
+- This disclosure is complete and accurate
+- I understand all code in my submission
+- I can explain and modify my work if asked
+- I take full responsibility for my submission
+
+Signature: Md. Sameer Sakib
+Date: 08/03/2026
