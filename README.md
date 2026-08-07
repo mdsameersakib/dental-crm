@@ -93,6 +93,17 @@ graph TD
 
 ---
 
+### 3. Patient Portal & Care Hub
+| Feature | Navigation Path | Technical Highlights | Screenshot Preview |
+| :--- | :--- | :--- | :---: |
+| **16. Patient Dashboard** | `/patient/dashboard` | Patient care hub displaying upcoming visits, reminders, and shared medical documents. | ![Patient Dashboard](./public/screenshots/16-patient-dashboard.png) |
+| **17. My Appointments** | `/patient/appointments` | Confirmed appointment schedule and historical treatment visit logs. | ![Patient Appointments](./public/screenshots/17-patient-appointments.png) |
+| **18. Patient Profile** | `/patient/profile` | Personal contact information and medical health details management. | ![Patient Profile](./public/screenshots/18-patient-profile.png) |
+| **19. AI Clinic Assistant** | `/patient/help` | Google Gemini AI conversational clinical assistant providing care guidance & Q&A. | ![AI Clinic Assistant](./public/screenshots/19-patient-ai-assistant.png) |
+
+
+---
+
 ## 💻 Technology Stack
 
 | Domain | Technology | Engineering Purpose |
