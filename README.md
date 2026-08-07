@@ -66,22 +66,30 @@ graph TD
 
 ## 📱 Platform Walkthrough & Screenshots
 
-### 1. Public Portal & Patient Discovery
+### 1. Public Discovery Portal
 | Feature | Technical Highlights | Screenshot Preview |
 | :--- | :--- | :---: |
-| **Clinic Landing & Hero** | Dynamic SSR content rendering services, emergency announcements, and interactive clinic information directly from Supabase. | ![Landing Page](./public/screenshots/01-landing-page.png) |
-| **Services & Dentist Catalog** | Filterable catalog displaying dental specializations, pricing tiers, doctor credentials, and availability. | ![Services & Dentists](./public/screenshots/02-services-dentists.png) |
-| **Instant Appointment Request** | Multi-step interactive booking form with real-time field validation and conflict prevention. | ![Patient Booking Request](./public/screenshots/03-patient-booking-modal.png) |
+| **01. Clinic Landing Page** (`/`) | Dynamic SSR content rendering services, emergency announcements, and interactive clinic hero. | ![Landing Page](./public/screenshots/01-landing-page.png) |
+| **02. Services Catalog** (`/services`) | Filterable catalog displaying dental specializations, pricing tiers, and duration. | ![Services Catalog](./public/screenshots/02-services-catalog.png) |
+| **03. Dentists Catalog** (`/dentists`) | Specialist doctor directory displaying credentials, experience, and schedules. | ![Dentists Catalog](./public/screenshots/03-dentists-catalog.png) |
+| **04. Patient Booking Request** (`/book`) | Interactive multi-step booking form with real-time field validation. | ![Patient Booking](./public/screenshots/04-booking-request.png) |
 
 ---
 
-### 2. Staff CRM & Clinical Operations
-| Feature | Technical Highlights | Screenshot Preview |
-| :--- | :--- | :---: |
-| **Staff Auth & Gate** | Secure magic-link & password-based staff login with session refresh via Next.js middleware proxy (`proxy.ts`). | ![Staff Auth Login](./public/screenshots/04-staff-auth-login.png) |
-| **Dashboard Metrics & KPIs** | Real-time analytics displaying active booking requests, upcoming appointments, and daily revenue stats. | ![Staff Dashboard](./public/screenshots/05-staff-dashboard-metrics.png) |
-| **Booking Conversion Flow** | One-click workflow to review patient booking submissions, assign specialist dentists, and convert into confirmed appointments. | ![Appointment Management](./public/screenshots/06-appointment-management.png) |
-| **Schedule & Clinic Settings** | Comprehensive CRUD interface for managing dentist working hours, vacation overlays, service rates, and staff invitations. | ![Clinic Settings](./public/screenshots/07-schedule-and-clinic-settings.png) |
+### 2. Staff CRM & Clinical Operations (Sidebar Order)
+| Feature | Navigation Path | Technical Highlights | Screenshot Preview |
+| :--- | :--- | :--- | :---: |
+| **05. Staff Login Gate** | `/auth/login` | Secure staff login with session refresh via Next.js middleware proxy (`proxy.ts`). | ![Staff Login](./public/screenshots/05-staff-login.png) |
+| **06. Main Dashboard** | `/staff/dashboard` | Real-time analytics displaying active booking requests, upcoming appointments, and revenue KPIs. | ![Staff Dashboard](./public/screenshots/06-staff-dashboard.png) |
+| **07. Booking Requests** | `/staff/booking-requests` | Review patient booking submissions, assign specialist dentists, and convert to appointments. | ![Booking Requests](./public/screenshots/07-staff-booking-requests.png) |
+| **08. Appointments** | `/staff/appointments` | Comprehensive appointment calendar, status transitions, and schedule views. | ![Appointments](./public/screenshots/08-staff-appointments.png) |
+| **09. Patients Directory** | `/staff/patients` | Unified patient records, contact details, and clinical care history. | ![Patients Directory](./public/screenshots/09-staff-patients.png) |
+| **10. Waitlist Queue** | `/staff/waitlist` | Priority waitlist queue management for fast slot re-allocation on cancellations. | ![Waitlist Queue](./public/screenshots/10-staff-waitlist.png) |
+| **11. Treatments** | `/staff/treatments` | Active patient treatment management, clinical notes, and procedure tracking. | ![Treatments](./public/screenshots/11-staff-treatments.png) |
+| **12. Services Management** | `/staff/services` | Service catalog CRUD interface for managing rates, durations, and images. | ![Services Management](./public/screenshots/12-staff-services.png) |
+| **13. Dentists & Schedules** | `/staff/dentists` | Doctor profile management, working hours configuration, and vacation overlays. | ![Dentists & Schedules](./public/screenshots/13-staff-dentists.png) |
+| **14. Landing Content** | `/staff/landing-content` | Real-time editor for public website contact info, announcements, and FAQs. | ![Landing Content](./public/screenshots/14-staff-landing-content.png) |
+| **15. Workspace Settings** | `/staff/settings` | Clinic profile settings, staff role management, and team onboarding invitations. | ![Workspace Settings](./public/screenshots/15-staff-settings.png) |
 
 ---
 
