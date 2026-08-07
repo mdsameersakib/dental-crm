@@ -36,9 +36,9 @@ graph TD
 
     subgraph Application & Server Boundary
         B --> C{Route & Role Middleware / Proxy}
-        C -->|Public Routes / (public)| D[Server Component SSR / Server Actions]
-        C -->|Patient Routes / (patient)| E[Patient Auth & Profile Handler]
-        C -->|Staff Routes / (staff)| F[Staff Session & Auth Gate]
+        C -->|Public Routes| D[Server Component SSR / Server Actions]
+        C -->|Patient Routes| E[Patient Auth & Profile Handler]
+        C -->|Staff Routes| F[Staff Session & Auth Gate]
         
         D --> G[Public Content Queries]
         E --> H[Patient Portal Mutations]
