@@ -94,7 +94,7 @@ export async function requestPasswordReset(formData: FormData) {
   const baseUrl = await buildBaseUrlFromHeaders();
 
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${baseUrl ?? "http://localhost:3000"}/auth/reset-password`,
+    redirectTo: `${baseUrl ?? "http://localhost:3000"}/auth/callback?next=/auth/reset-password`,
   });
 
   if (error) {

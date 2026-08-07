@@ -19,57 +19,127 @@ export default function ResetPasswordPage() {
     let cancelled = false;
 
     async function prepareRecoverySession() {
-      const supabase = createClient();
-      const hash = window.location.hash.replace(/^#/, "");
+      try {
+        const supabase = createClient();
+        const searchParams = new URLSearchParams(window.location.search);
+        const code = searchParams.get("code");
+        const tokenHash = searchParams.get("token_hash");
+        const type = searchParams.get("type");
+        const hash = window.location.hash.replace(/^#/, "");
 
-      if (hash) {
-        const params = new URLSearchParams(hash);
-        const accessToken = params.get("access_token");
-        const refreshToken = params.get("refresh_token");
+        // 1. PKCE Code Exchange (?code=...)
+        if (code) {
+          const { error: exchangeError } =
+            await supabase.auth.exchangeCodeForSession(code);
 
-        if (accessToken && refreshToken) {
-          const { error: sessionError } = await supabase.auth.setSession({
-            access_token: accessToken,
-            refresh_token: refreshToken,
-          });
+          if (cancelled) return;
 
-          if (cancelled) {
-            return;
-          }
-
-          if (sessionError) {
+          if (exchangeError) {
             setError(
-              sessionError.message ||
+              exchangeError.message ||
                 "Recovery link is invalid or has expired. Please request a new one.",
             );
             setIsPreparing(false);
             return;
           }
 
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname,
+          );
           setMessage("Recovery verified. Set your new password.");
           setIsPreparing(false);
           return;
         }
-      }
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+        // 2. Token Hash / OTP verification (?token_hash=...&type=...)
+        if (tokenHash && type) {
+          const { error: verifyError } = await supabase.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: type as any,
+          });
 
-      if (cancelled) {
-        return;
-      }
+          if (cancelled) return;
 
-      if (!session) {
+          if (verifyError) {
+            setError(
+              verifyError.message ||
+                "Recovery link is invalid or has expired. Please request a new one.",
+            );
+            setIsPreparing(false);
+            return;
+          }
+
+          window.history.replaceState(
+            {},
+            document.title,
+            window.location.pathname,
+          );
+          setMessage("Recovery verified. Set your new password.");
+          setIsPreparing(false);
+          return;
+        }
+
+        // 3. Implicit Hash Fragment (#access_token=...&refresh_token=...)
+        if (hash) {
+          const params = new URLSearchParams(hash);
+          const accessToken = params.get("access_token");
+          const refreshToken = params.get("refresh_token");
+
+          if (accessToken && refreshToken) {
+            const { error: sessionError } = await supabase.auth.setSession({
+              access_token: accessToken,
+              refresh_token: refreshToken,
+            });
+
+            if (cancelled) return;
+
+            if (sessionError) {
+              setError(
+                sessionError.message ||
+                  "Recovery link is invalid or has expired. Please request a new one.",
+              );
+              setIsPreparing(false);
+              return;
+            }
+
+            window.history.replaceState(
+              {},
+              document.title,
+              window.location.pathname,
+            );
+            setMessage("Recovery verified. Set your new password.");
+            setIsPreparing(false);
+            return;
+          }
+        }
+
+        // 4. Check existing session
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
+        if (cancelled) return;
+
+        if (!session) {
+          setError(
+            "Recovery link is invalid or has expired. Please request a new one.",
+          );
+          setIsPreparing(false);
+          return;
+        }
+
+        setMessage("Recovery verified. Set your new password.");
+        setIsPreparing(false);
+      } catch (err: any) {
+        if (cancelled) return;
         setError(
-          "Recovery link is invalid or has expired. Please request a new one.",
+          err?.message ||
+            "Unable to verify recovery link. Please request a new one.",
         );
         setIsPreparing(false);
-        return;
       }
-
-      setMessage("Recovery verified. Set your new password.");
-      setIsPreparing(false);
     }
 
     void prepareRecoverySession();
